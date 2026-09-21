@@ -20,9 +20,10 @@ Proyecto Capstone (PTY4614) — Duoc UC, Escuela de Informática y Telecomunicac
 - Directorio de profesionales y establecimientos con búsqueda geolocalizada, vista de mapa y lista.
 - Asistente de orientación en salud y bienestar (API de Claude) que recomienda categorías de profesionales.
 - Gestor de alimentación: registro de comidas en lenguaje natural y seguimiento de calorías y macronutrientes.
+- Reserva básica de horas: el profesional publica su disponibilidad y el usuario reserva indicando brevemente lo que necesita.
 - Despliegue con contenedores Docker.
 
-Fuera de alcance este semestre: reservas, pagos, verificación avanzada de profesionales e integración con wearables. El asistente entrega orientación general y no reemplaza la atención de un profesional de salud.
+Fuera de alcance este semestre: pagos, integración con calendarios externos, verificación avanzada de profesionales e integración con wearables. El asistente entrega orientación general y no reemplaza la atención de un profesional de salud.
 
 ## Stack
 
@@ -39,8 +40,18 @@ Fuera de alcance este semestre: reservas, pagos, verificación avanzada de profe
 
 ## Estructura del repositorio
 
+El repositorio contiene el código de la aplicación y la documentación del proyecto, organizada según el instructivo de la asignatura.
+
 ```
 FitSeach/
+├── FASE 1/                # Evidencias de la Fase 1 (individuales y grupales)
+├── FASE 2/                # Evidencias de la Fase 2
+│   ├── Evidencias Individuales/
+│   ├── Evidencias Grupales/        # Guía 2.4 y planillas de evaluación
+│   └── Evidencias Proyecto/
+│       ├── Evidencias de documentación/   # DAS, DoD, Sprint 1, Plan de Pruebas, control
+│       └── Evidencias de sistema/         # capturas de la aplicación y de la base de datos
+├── FASE 3/                # Evidencias de la Fase 3
 ├── frontend/              # React + Vite
 │   └── src/
 │       ├── pages/         # Pantallas de la aplicación (y sus pruebas)
@@ -64,7 +75,7 @@ FitSeach/
 └── README.md
 ```
 
-La documentación oficial del proyecto (Documento de Arquitectura, Definition of Done, plan de pruebas, seguimiento de sprints) se mantiene fuera de este repositorio, en la carpeta `FitSeachDocumentos/`.
+La documentación oficial (Documento de Arquitectura, Definition of Done, plan de pruebas y seguimiento de sprints) está en `FASE 2/Evidencias Proyecto/Evidencias de documentación/`.
 
 ## Requisitos previos
 

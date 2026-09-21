@@ -15,6 +15,9 @@ coverage/
 *.log
 npm-debug.log*
 
+# Archivos temporales de Office (se crean al abrir un .docx o .xlsx)
+~$*
+
 # Editor y sistema operativo
 .vscode/*
 !.vscode/extensions.json
