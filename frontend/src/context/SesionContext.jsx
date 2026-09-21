@@ -6,7 +6,8 @@ const SesionContext = createContext(null);
 
 export function SesionProvider({ children }) {
   const [sesion, setSesion] = useState(leerSesionGuardada);
-  const [avisoSesion, setAvisoSesion] = useState('');
+  // Aviso breve que se muestra tras iniciar o cerrar sesión, o cuando el token expira.
+  const [aviso, setAviso] = useState(null);
 
   const establecer = useCallback((nuevaSesion) => {
     guardarSesion(nuevaSesion);
@@ -16,16 +17,23 @@ export function SesionProvider({ children }) {
   useEffect(() => {
     registrarManejadorSesionExpirada(() => {
       establecer(null);
-      setAvisoSesion('Tu sesión expiró. Inicia sesión nuevamente.');
+      setAviso({ tipo: 'info', texto: 'Tu sesión expiró. Inicia sesión nuevamente.' });
     });
   }, [establecer]);
 
   const valor = useMemo(() => ({
     sesion,
-    avisoSesion,
-    limpiarAviso: () => setAvisoSesion(''),
-    registrar: async (datos) => establecer(await authService.registrar(datos)),
-    iniciarSesion: async (datos) => establecer(await authService.iniciarSesion(datos)),
+    aviso,
+    limpiarAviso: () => setAviso(null),
+    registrar: async (datos) => {
+      setAviso(null);
+      establecer(await authService.registrar(datos));
+    },
+    iniciarSesion: async (datos) => {
+      const nuevaSesion = await authService.iniciarSesion(datos);
+      establecer(nuevaSesion);
+      setAviso({ tipo: 'exito', texto: `Sesión iniciada como ${nuevaSesion.usuario.nombre}.` });
+    },
     cerrarSesion: async () => {
       try {
         await authService.cerrarSesion();
@@ -33,8 +41,9 @@ export function SesionProvider({ children }) {
         // El token se descarta igual en el cliente aunque el servidor no responda.
       }
       establecer(null);
+      setAviso({ tipo: 'exito', texto: 'Cerraste sesión correctamente.' });
     },
-  }), [sesion, avisoSesion, establecer]);
+  }), [sesion, aviso, establecer]);
 
   return <SesionContext.Provider value={valor}>{children}</SesionContext.Provider>;
 }

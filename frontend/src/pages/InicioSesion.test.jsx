@@ -27,6 +27,7 @@ describe('Inicio de sesión (FS-HU-01)', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Iniciar sesión' }));
 
     expect(await screen.findByRole('heading', { name: 'Hola, Ana Pérez' })).toBeInTheDocument();
+    expect(await screen.findByText('Sesión iniciada como Ana Pérez.')).toBeInTheDocument();
     expect(JSON.parse(localStorage.getItem('fitsearch_sesion')).token).toBe('token-de-prueba');
   });
 
@@ -50,6 +51,7 @@ describe('Inicio de sesión (FS-HU-01)', () => {
     await userEvent.click(await screen.findByRole('button', { name: 'Cerrar sesión' }));
 
     expect(await screen.findByRole('heading', { name: 'Inicia sesión' })).toBeInTheDocument();
+    expect(screen.getByText('Cerraste sesión correctamente.')).toBeInTheDocument();
     expect(localStorage.getItem('fitsearch_sesion')).toBeNull();
   });
 

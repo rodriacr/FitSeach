@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Alerta from '../components/Alerta.jsx';
 import CampoFormulario from '../components/CampoFormulario.jsx';
+import { useSesion } from '../context/SesionContext.jsx';
 import { actualizarPerfil, obtenerPerfil } from '../services/perfil.service.js';
 import { opcionesActividad, opcionesSexo, validarPerfil } from '../services/validaciones.js';
 
@@ -11,6 +12,8 @@ const aFormulario = (perfil) =>
 
 export default function Perfil() {
   const { state } = useLocation();
+  const { aviso, limpiarAviso } = useSesion();
+  const [avisoInicial] = useState(aviso);
   const [cargando, setCargando] = useState(true);
   const [usuario, setUsuario] = useState(null);
   const [completo, setCompleto] = useState(false);
@@ -34,6 +37,11 @@ export default function Perfil() {
       .finally(() => activo && setCargando(false));
     return () => { activo = false; };
   }, []);
+
+  // El aviso de sesión iniciada se muestra una sola vez al llegar al perfil.
+  useEffect(() => {
+    if (avisoInicial) limpiarAviso();
+  }, [avisoInicial, limpiarAviso]);
 
   const cambiar = (evento) => setDatos({ ...datos, [evento.target.name]: evento.target.value });
 
@@ -74,7 +82,8 @@ export default function Perfil() {
     <section className="tarjeta">
       <h1>{usuario ? `Hola, ${usuario.nombre}` : 'Mi perfil'}</h1>
       {usuario && <p className="texto-secundario">{usuario.correo}</p>}
-      {state?.bienvenida && !completo && <Alerta tipo="exito">Tu cuenta fue creada y la sesión está iniciada.</Alerta>}
+      {state?.bienvenida && <Alerta tipo="exito">Tu cuenta fue creada y la sesión está iniciada.</Alerta>}
+      {avisoInicial && <Alerta tipo={avisoInicial.tipo}>{avisoInicial.texto}</Alerta>}
       {!completo && usuario && (
         <Alerta tipo="info">Completa tus datos básicos para recibir estimaciones nutricionales personalizadas.</Alerta>
       )}

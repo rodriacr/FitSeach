@@ -6,7 +6,7 @@ import { useSesion } from '../context/SesionContext.jsx';
 import { validarInicioSesion } from '../services/validaciones.js';
 
 export default function InicioSesion() {
-  const { iniciarSesion, avisoSesion, limpiarAviso } = useSesion();
+  const { iniciarSesion, aviso, limpiarAviso } = useSesion();
   const navegar = useNavigate();
   const [datos, setDatos] = useState({ correo: '', password: '' });
   const [errores, setErrores] = useState({});
@@ -36,7 +36,7 @@ export default function InicioSesion() {
   return (
     <section className="tarjeta">
       <h1>Inicia sesión</h1>
-      <Alerta tipo="info">{avisoSesion}</Alerta>
+      {aviso && <Alerta tipo={aviso.tipo}>{aviso.texto}</Alerta>}
       <Alerta>{mensaje}</Alerta>
       <form onSubmit={enviar} noValidate>
         <CampoFormulario id="correo" etiqueta="Correo electrónico" type="email" autoComplete="email"
