@@ -43,7 +43,7 @@ Fuera de alcance este semestre: pagos, integración con calendarios externos, ve
 El repositorio sigue la estructura exigida por la asignatura: el código de la aplicación está en `FASE 2/Evidencias Proyecto/Evidencias de sistema/` y todo el resto de la documentación del proyecto en `FASE 2/Evidencias Proyecto/Evidencias de documentación/`.
 
 ```
-FitSeach/
+FitSearch/
 ├── FASE 1/                # Evidencias de la Fase 1 (individuales y grupales)
 ├── FASE 2/                # Evidencias de la Fase 2
 │   ├── Evidencias Individuales/
@@ -94,8 +94,8 @@ cd "FASE 2/Evidencias Proyecto/Evidencias de sistema"
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/rodriacr/FitSeach.git
-cd FitSeach
+git clone https://github.com/rodriacr/FitSearch.git
+cd FitSearch
 ```
 
 ### 2. Base de datos

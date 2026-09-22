@@ -1,6 +1,23 @@
 # Diagramas UML del DAS v1.9 — instrucciones para pasarlos a Miro
 
-Preparado el 22-09-2026 para **Luis Méndez**. Los diez diagramas ya están dentro del DAS v1.9 (Ilustraciones 1 a 10), así que el documento es correcto aunque Miro todavía no esté actualizado. La tarea es dejar el **tablero de Miro** igual a estos diagramas, porque Miro es la fuente oficial de las vistas 4+1.
+Preparado el 22-09-2026 para **Luis Méndez**.
+
+**Actualización (22-09-2026): los 10 diagramas ya están en Miro.** Rodrigo los pasó al tablero **FitSearch Architecture** (https://miro.com/app/board/uXjVHtdZChE=/) como diagramas editables, en un área nueva a la derecha de los diagramas antiguos, bajo el título "FitSearch: modelo 4+1 en UML (DAS v1.9)". Hay un marco por diagrama:
+
+- **Fila 1:** casos de uso, clases y estados de la reserva.
+- **Fila 2:** modelo de datos implementado y completo.
+- **Fila 3:** las 3 secuencias.
+- **Fila 4:** componentes y despliegue.
+
+Clases, modelos de datos y secuencias son diagramas de Miro generados desde código Mermaid (se editan con doble clic). Casos de uso, estados, componentes y despliegue están armados con formas y conectores.
+
+**Tarea que le queda a Luis:**
+1. Revisar cada marco nuevo contra la tabla "Los diez diagramas" de más abajo y corregir en Miro lo que haga falta.
+2. Borrar los diagramas antiguos de la izquierda, salvo la secuencia del registro de comida, que no cambia.
+3. Exportar cada marco como PNG y reemplazar los archivos de la carpeta `Diagramas (Miro)`.
+4. Avisar a Rodrigo si cambió algo, para actualizar las ilustraciones del DAS.
+
+Las secciones siguientes quedan como referencia de qué debe mostrar cada diagrama.
 
 ## Archivos de cada diagrama
 
@@ -32,11 +49,13 @@ Los diagramas 01, 07 y 08 no tienen MMD porque se dibujaron a mano para respetar
 | 6 | 06_Secuencia_Asistente_Perfil | Procesos | 6 | **Nuevo.** Actor Usuario, líneas de vida Frontend, Backend y MySQL, fragmento **alt** ("hay pasos pendientes" / "perfil completo") y un mensaje a sí mismo del Backend (validar contra reglas.json). |
 | 7 | 09_Secuencia_Reserva | Procesos | 7 | **Nuevo.** Actores Usuario A, Usuario B y Profesional. Fragmento **par** para las dos reservas simultáneas; la transacción A confirma (201) y la B se revierte (409). Nota final QS5. |
 | 8 | 05_Secuencia_Recuperar_Contrasena | Procesos | 8 | **Nuevo.** Dos fragmentos **alt**: si el correo existe, y si el código es válido o está vencido/usado. El envío al servidor SMTP es asíncrono (flecha de punta abierta). |
-| 9 | 07_Vista_de_Desarrollo | Desarrollo | 9 | **Ahora es un diagrama de componentes UML** (el marco debe llamarse "Vista de Desarrollo", no "Vista de Despliegue": corrige la contradicción 6). Dos «subsystem» (Frontend SPA y Backend API) con componentes (rectángulo con el ícono de componente arriba a la derecha). Interfaz **API REST /api** en notación bola y cavidad: la bola en el Router (provee) y la cavidad en el Cliente API (requiere). Flechas punteadas «use» entre componentes, «library» para shared/reglas.json, Nodemailer, google-auth-library y Prisma Client, y a la derecha SMTP, Google Identity Services y MySQL. |
+| 9 | 07_Vista_de_Desarrollo | Desarrollo | 9 | **Ahora es un diagrama de componentes UML**. Dos «subsystem» (Frontend SPA y Backend API) con componentes (rectángulo con el ícono de componente arriba a la derecha). Interfaz **API REST /api** en notación bola y cavidad: la bola en el Router (provee) y la cavidad en el Cliente API (requiere). Flechas punteadas «use» entre componentes, «library» para shared/reglas.json, Nodemailer, google-auth-library y Prisma Client, y a la derecha SMTP, Google Identity Services y MySQL. |
 | 10 | 08_Vista_Fisica | Física | 10 | **Ahora es un diagrama de despliegue UML.** Nodos en forma de cubo 3D: «device» Dispositivo del usuario (dentro, «executionEnvironment» Navegador web con el «artifact» SPA de React) y «device» Servidor (Docker host) con tres «executionEnvironment» (Nginx, Node.js y MySQL 8), cada uno con sus artefactos. Cuatro «device» externos a la derecha (los nuevos del Sprint 2 en naranja con borde grueso). Líneas **sin flecha** con el protocolo como estereotipo: «HTTPS», «HTTP» /api, «TCP/IP» 3306 y «SMTP/TLS». Corrige la contradicción 2. |
 
 La secuencia del registro de comida (Ilustración 5) no cambia y se mantiene como está en Miro.
 
-## Contradicción 6
+## Contradicciones
 
-En el tablero, la vista de módulos del código aparecía como "Vista de Despliegue". En el modelo 4+1 se llama **Vista de Desarrollo**; el despliegue con Docker corresponde a la **Vista Física**. Se corrige titulando los marcos de Miro igual que los diagramas 07 ("Vista de desarrollo: diagrama de componentes UML") y 08 ("Vista física: diagrama de despliegue UML"). Con los diagramas 02, 08 y estos títulos quedan resueltas en Miro las contradicciones 1, 2 y 6.
+Con los diagramas 02 y 08 quedan resueltas en Miro las contradicciones 1 (diagrama de clases distinto del modelo de datos) y 2 (vista física sin la conexión del navegador con Google Maps).
+
+La contradicción 6 **ya estaba resuelta y no requiere acción**: el nombre incorrecto "Vista de Despliegue" estaba en la plantilla del DAS y se corrigió a "Vista de Desarrollo" el 14-09-2026. El tablero de Miro ya usaba el nombre correcto.
