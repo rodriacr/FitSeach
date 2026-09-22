@@ -1,0 +1,29 @@
+sequenceDiagram
+  autonumber
+  actor A as Usuario A
+  actor B as Usuario B
+  participant F as Frontend (React)
+  participant BE as Backend (Express)
+  participant D as MySQL
+  actor PR as Profesional
+  A->>F: Abre el perfil del profesional
+  F->>BE: GET /api/profesionales/:id/disponibilidades
+  BE->>D: Bloques del profesional sin reserva activa
+  BE-->>F: Horarios disponibles
+  par Usuario A y Usuario B eligen el mismo bloque casi al mismo tiempo
+    A->>F: "Reservar" + mensaje breve (10 a 500 caracteres)
+    F->>BE: POST /api/reservas { disponibilidadId, mensaje }
+  and
+    B->>F: "Reservar" el mismo bloque + mensaje
+    F->>BE: POST /api/reservas { disponibilidadId, mensaje }
+  end
+  BE->>D: Transacción A: bloquear el bloque (SELECT ... FOR UPDATE)
+  BE->>D: No hay reserva activa → INSERT reserva "pendiente" y COMMIT
+  BE-->>F: 201 Created (Usuario A)
+  BE->>D: Transacción B: bloquear el bloque (espera a que A termine)
+  BE->>D: Ya existe una reserva activa → ROLLBACK
+  BE-->>F: 409 "El horario ya no está disponible" (Usuario B)
+  PR->>F: Revisa sus reservas con el mensaje de cada usuario
+  F->>BE: PATCH /api/reservas/:id { estado: "confirmada" o "cancelada" }
+  BE->>D: Actualizar estado (si se cancela, el bloque vuelve a estar disponible)
+  Note over BE,D: QS5: 0 bloques con más de una reserva activa (pendiente o confirmada)

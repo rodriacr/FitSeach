@@ -1,0 +1,25 @@
+sequenceDiagram
+  autonumber
+  actor U as Usuario
+  participant F as Frontend (React)
+  participant B as Backend (Express)
+  participant D as MySQL
+  participant C as Servidor SMTP
+  U->>F: "¿Olvidaste tu contraseña?" + correo
+  F->>B: POST /api/auth/recuperar { correo }
+  B->>D: Buscar usuario por correo
+  alt el correo está registrado
+    B->>D: Invalidar códigos anteriores e insertar hash SHA-256 (vence en 60 min)
+    B-)C: Enviar correo con /restablecer-contrasena?token=código (sin esperar)
+  end
+  B-->>F: 200 mismo mensaje exista o no la cuenta (QS6)
+  C-->>U: Correo con el enlace
+  U->>F: Abre el enlace y escribe la contraseña nueva dos veces
+  F->>B: POST /api/auth/restablecer { token, password }
+  B->>D: Buscar el hash del código
+  alt código vigente y sin usar
+    B->>D: Transacción: marcar fecha_uso y actualizar password_hash (bcrypt)
+    B-->>F: 200 "Tu contraseña fue actualizada"
+  else vencido, usado o alterado
+    B-->>F: 400 "El enlace no es válido o ya venció"
+  end

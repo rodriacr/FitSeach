@@ -1,0 +1,29 @@
+sequenceDiagram
+  autonumber
+  actor U as Usuario
+  participant F as Frontend (React)
+  participant B as Backend (Express)
+  participant D as MySQL
+  U->>F: Entra a "Mi perfil" (después de registrarse o iniciar sesión)
+  F->>B: GET /api/perfil (Bearer JWT)
+  B->>D: Usuario + perfiles_usuario + informacion_salud
+  B-->>F: perfil, objetivos, salud, pasos pendientes y kcal/día
+  alt hay pasos pendientes
+    F-->>U: Asistente en el primer paso pendiente
+    U->>F: Paso 1: peso, altura, edad, sexo y actividad física
+    F->>B: PUT /api/perfil
+    B->>D: Guardar datos básicos
+    U->>F: Paso 2: objetivo, comidas al día y horas de sueño
+    F->>B: PUT /api/perfil/objetivos
+    B->>D: Guardar objetivos en perfiles_usuario
+    U->>F: Paso 3: condiciones, medicamentos y alergias
+    F->>B: PUT /api/perfil/salud
+    B->>B: Validar valores contra shared/reglas.json ("Ninguna" excluyente)
+    B->>D: Guardar en informacion_salud
+    F-->>U: Paso 4: "¡Información guardada!" + kcal/día
+  else perfil completo
+    F-->>U: Resumen con "Editar" por sección
+    U->>F: Editar una sección y "Guardar cambios"
+    F->>B: PUT del paso correspondiente
+    F-->>U: Vuelve al resumen actualizado
+  end

@@ -40,7 +40,7 @@ Fuera de alcance este semestre: pagos, integración con calendarios externos, ve
 
 ## Estructura del repositorio
 
-El repositorio contiene el código de la aplicación y la documentación del proyecto, organizada según el instructivo de la asignatura.
+El repositorio sigue la estructura exigida por la asignatura: el código de la aplicación está en `FASE 2/Evidencias Proyecto/Evidencias de sistema/` y todo el resto de la documentación del proyecto en `FASE 2/Evidencias Proyecto/Evidencias de documentación/`.
 
 ```
 FitSeach/
@@ -49,33 +49,38 @@ FitSeach/
 │   ├── Evidencias Individuales/
 │   ├── Evidencias Grupales/        # Guía 2.4 y planillas de evaluación
 │   └── Evidencias Proyecto/
-│       ├── Evidencias de documentación/   # DAS, DoD, Sprint 1, Plan de Pruebas, control
-│       └── Evidencias de sistema/         # capturas de la aplicación y de la base de datos
+│       ├── Evidencias de documentación/   # DAS, DoD, diagramas, sprints (con sus capturas), plan de pruebas y control
+│       └── Evidencias de sistema/         # Código de la aplicación
+│           ├── frontend/          # React + Vite
+│           │   └── src/
+│           │       ├── pages/         # Pantallas de la aplicación (y sus pruebas)
+│           │       ├── components/    # Componentes de UI reutilizables (incluye perfil/)
+│           │       ├── context/       # Estado global de la sesión
+│           │       ├── services/      # Cliente de la API REST y validaciones
+│           │       ├── assets/        # Logos de FitSearch
+│           │       └── tests/         # Configuración y utilidades de pruebas
+│           ├── backend/           # Node.js + Express
+│           │   ├── prisma/            # Esquema, migraciones, datos iniciales y script de creación de la BD
+│           │   ├── src/
+│           │   │   ├── routes/        # Definición de endpoints
+│           │   │   ├── controllers/   # Orquestan las peticiones
+│           │   │   ├── services/      # Lógica de negocio, correo e IA
+│           │   │   ├── models/        # Acceso a datos (Prisma / MySQL)
+│           │   │   ├── middlewares/   # Autenticación, validación y manejo de errores
+│           │   │   ├── validators/    # Reglas de validación por endpoint
+│           │   │   └── config/        # Variables de entorno
+│           │   └── tests/             # Pruebas unitarias y de integración
+│           ├── shared/            # Reglas y catálogos comunes a frontend y backend (reglas.json)
+│           └── docker-compose.yml
 ├── FASE 3/                # Evidencias de la Fase 3
-├── frontend/              # React + Vite
-│   └── src/
-│       ├── pages/         # Pantallas de la aplicación (y sus pruebas)
-│       ├── components/    # Componentes de UI reutilizables
-│       ├── context/       # Estado global de la sesión
-│       ├── services/      # Cliente de la API REST y validaciones
-│       └── tests/         # Configuración y utilidades de pruebas
-├── backend/               # Node.js + Express
-│   ├── prisma/            # Esquema, migraciones, datos iniciales y script de creación de la BD
-│   ├── src/
-│   │   ├── routes/        # Definición de endpoints
-│   │   ├── controllers/   # Orquestan las peticiones
-│   │   ├── services/      # Lógica de negocio e IA
-│   │   ├── models/        # Acceso a datos (Prisma / MySQL)
-│   │   ├── middlewares/   # Autenticación, validación y manejo de errores
-│   │   ├── validators/    # Reglas de validación por endpoint
-│   │   └── config/        # Variables de entorno
-│   └── tests/             # Pruebas unitarias y de integración
-├── shared/                # Reglas comunes a frontend y backend (reglas.json)
-├── docker-compose.yml
 └── README.md
 ```
 
-La documentación oficial (Documento de Arquitectura, Definition of Done, plan de pruebas y seguimiento de sprints) está en `FASE 2/Evidencias Proyecto/Evidencias de documentación/`.
+En los pasos siguientes, las rutas `backend/` y `frontend/` son relativas a la carpeta del código. Para llegar a ella desde la raíz del repositorio:
+
+```bash
+cd "FASE 2/Evidencias Proyecto/Evidencias de sistema"
+```
 
 ## Requisitos previos
 
@@ -117,6 +122,16 @@ Completar `backend/.env`:
 | `JWT_SECRET` | Cadena larga y aleatoria para firmar los tokens |
 | `JWT_EXPIRES_IN` | Duración de la sesión (por defecto `8h`) |
 | `BCRYPT_COST` | Costo del hash de contraseñas (por defecto 10) |
+| `JWT_REMEMBER_EXPIRES_IN` | Duración de la sesión cuando se marca "Recordarme" (por defecto `30d`) |
+| `FRONTEND_URL` | Dirección del frontend usada en el enlace de recuperación (por defecto `http://localhost:5173`) |
+| `RECOVERY_TOKEN_MINUTES` | Vigencia del enlace de recuperación de contraseña (por defecto 60) |
+| `SMTP_HOST`, `SMTP_PORT` | Servidor de correo (por defecto Gmail: `smtp.gmail.com`, 465) |
+| `SMTP_USUARIO`, `SMTP_CONTRASENA` | Cuenta que envía los correos y su contraseña de aplicación de Google |
+| `SMTP_REMITENTE` | Remitente visible, por ejemplo `"FitSearch <correo@gmail.com>"` |
+
+Mientras `SMTP_CONTRASENA` esté vacía o diga `CAMBIAR`, el enlace de recuperación de contraseña se muestra en la consola del backend en lugar de enviarse por correo (útil en desarrollo).
+
+Opcional en `frontend/.env`: `VITE_GOOGLE_CLIENT_ID` con el ID de cliente OAuth de Google. Sin esta variable, el botón "Continuar con Google" aparece desactivado.
 
 ### 4. Backend
 
@@ -142,16 +157,22 @@ npm run dev
 
 La aplicación queda en `http://localhost:5173`. Vite reenvía las llamadas a `/api` hacia el backend.
 
-## API disponible (Sprint 1)
+> Si cambias `shared/reglas.json` con `npm run dev` en marcha, reinicia el frontend: Vite puede seguir usando la versión anterior del archivo.
+
+## API disponible (Sprints 1 y 2)
 
 | Método | Ruta | Autenticación | Descripción |
 |---|---|---|---|
 | GET | `/api/salud` | No | Estado de la API |
-| POST | `/api/auth/registro` | No | Crea la cuenta (rol usuario) y devuelve el token |
-| POST | `/api/auth/login` | No | Inicia sesión y devuelve el token |
+| POST | `/api/auth/registro` | No | Crea la cuenta con el rol elegido (`usuario` o `profesional`) y devuelve el token |
+| POST | `/api/auth/login` | No | Inicia sesión y devuelve el token (`recordar: true` para una sesión de 30 días) |
+| POST | `/api/auth/recuperar` | No | Envía el enlace para restablecer la contraseña (responde lo mismo exista o no el correo) |
+| POST | `/api/auth/restablecer` | No | Cambia la contraseña con el código del enlace (vence en 60 minutos y sirve una vez) |
 | POST | `/api/auth/logout` | Bearer JWT | Cierra la sesión |
-| GET | `/api/perfil` | Bearer JWT | Datos del usuario, perfil básico y requerimiento calórico estimado |
+| GET | `/api/perfil` | Bearer JWT | Datos del usuario, perfil completo, pasos pendientes del asistente y requerimiento calórico estimado |
 | PUT | `/api/perfil` | Bearer JWT | Guarda peso, altura, edad, sexo y actividad física |
+| PUT | `/api/perfil/objetivos` | Bearer JWT | Guarda objetivo principal, comidas al día y horas de sueño (FS-HU-18) |
+| PUT | `/api/perfil/salud` | Bearer JWT | Guarda condiciones médicas, medicamentos y alergias (FS-HU-19; solo valores de `shared/reglas.json`) |
 
 Los errores se responden como `{ "error": "mensaje", "detalles": { "campo": "mensaje" } }`.
 

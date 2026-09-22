@@ -1,0 +1,16 @@
+stateDiagram-v2
+  direction LR
+  [*] --> Pendiente : el usuario reserva un bloque libre con un mensaje breve
+  Pendiente --> Confirmada : el profesional confirma
+  Pendiente --> Cancelada : el usuario o el profesional cancela
+  Confirmada --> Cancelada : el usuario o el profesional cancela
+  Cancelada --> [*] : el bloque vuelve a quedar disponible
+  Confirmada --> [*] : se realiza la atención
+  state "Reserva activa" as Activa {
+    Pendiente
+    Confirmada
+  }
+  note right of Cancelada
+    Estado final: no se puede reactivar;
+    el usuario debe hacer una reserva nueva
+  end note
