@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Alerta from '../components/Alerta.jsx';
 import Icono from '../components/Icono.jsx';
@@ -22,9 +22,11 @@ const HERRAMIENTAS = [
 // Portada pública, solo para invitados: con sesión iniciada App redirige al perfil.
 // Las funciones futuras se presentan sin simular servicios ni resultados.
 export default function Inicio() {
-  const { aviso, limpiarAviso } = useSesion();
-  // El aviso de cierre de sesión se muestra una sola vez: se descarta al salir de la portada.
-  useEffect(() => limpiarAviso, [limpiarAviso]);
+  const { aviso: avisoSesion, limpiarAviso } = useSesion();
+  // El aviso de cierre de sesión se muestra una sola vez: la portada lo conserva y lo descarta del contexto
+  // para que no reaparezca en otra pantalla (seguro con StrictMode, que repite los efectos en desarrollo).
+  const [aviso] = useState(avisoSesion);
+  useEffect(() => { limpiarAviso(); }, [limpiarAviso]);
 
   return (
     <div className="inicio">

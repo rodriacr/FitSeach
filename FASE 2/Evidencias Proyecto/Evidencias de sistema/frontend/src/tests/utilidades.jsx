@@ -1,15 +1,19 @@
 import { render } from '@testing-library/react';
+import { StrictMode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import App from '../App.jsx';
 import { SesionProvider } from '../context/SesionContext.jsx';
 
+// Igual que main.jsx: StrictMode repite los efectos y detecta los que no son seguros.
 export function renderizarApp(rutaInicial = '/') {
   return render(
-    <MemoryRouter initialEntries={[rutaInicial]}>
-      <SesionProvider>
-        <App />
-      </SesionProvider>
-    </MemoryRouter>,
+    <StrictMode>
+      <MemoryRouter initialEntries={[rutaInicial]}>
+        <SesionProvider>
+          <App />
+        </SesionProvider>
+      </MemoryRouter>
+    </StrictMode>,
   );
 }
 
