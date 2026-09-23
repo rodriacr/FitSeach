@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Icono from '../components/Icono.jsx';
 import { Logo } from '../components/PantallaAcceso.jsx';
 import { useSesion } from '../context/SesionContext.jsx';
@@ -19,8 +19,13 @@ const HERRAMIENTAS = [
 
 // Portada pública. Las funciones futuras se presentan sin simular servicios ni resultados.
 export default function Inicio() {
-  const { sesion } = useSesion();
+  const { sesion, cerrarSesion } = useSesion();
+  const navegar = useNavigate();
   const destino = sesion ? '/perfil' : '/registro';
+  const salir = async () => {
+    await cerrarSesion();
+    navegar('/iniciar-sesion', { replace: true });
+  };
 
   return (
     <div className="inicio">
@@ -34,7 +39,10 @@ export default function Inicio() {
           </nav>
           <div className="inicio__accesos">
             {sesion ? (
-              <Link to="/perfil" className="boton boton--compacto">Mi perfil <Icono nombre="usuario" tamano={18} /></Link>
+              <>
+                <Link to="/perfil" className="boton boton--compacto">Mi perfil <Icono nombre="usuario" tamano={18} /></Link>
+                <button type="button" className="boton boton--secundario" onClick={salir}>Cerrar sesión</button>
+              </>
             ) : (
               <>
                 <Link to="/iniciar-sesion" className="inicio__enlace-acceso">Iniciar sesión</Link>

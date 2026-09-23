@@ -4,6 +4,18 @@ import { describe, expect, test, vi } from 'vitest';
 import { PERFIL_COMPLETO, renderizarApp, respuestaJson, respuestaPerfil, SESION } from '../tests/utilidades.jsx';
 
 describe('Portada pública de FitSearch', () => {
+  test('cierra la sesión desde el Home y muestra el acceso existente', async () => {
+    localStorage.setItem('fitsearch_sesion', JSON.stringify(SESION));
+    const fetch = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null, { status: 204 }));
+    renderizarApp();
+    await userEvent.click(screen.getByRole('button', { name: 'Cerrar sesión' }));
+    expect(await screen.findByRole('heading', { name: '¡Bienvenido!' })).toBeInTheDocument();
+    expect(localStorage.getItem('fitsearch_sesion')).toBeNull();
+    expect(sessionStorage.getItem('fitsearch_sesion')).toBeNull();
+    expect(fetch).toHaveBeenCalledWith('/api/auth/logout', expect.objectContaining({ method: 'POST' }));
+    expect(screen.getByText('Cerraste sesión correctamente.')).toBeInTheDocument();
+  });
+
   test('permite conocer la plataforma sin sesión ni peticiones a la API', () => {
     const fetch = vi.spyOn(globalThis, 'fetch');
     renderizarApp();
