@@ -1,4 +1,6 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import Alerta from '../components/Alerta.jsx';
 import Icono from '../components/Icono.jsx';
 import { Logo } from '../components/PantallaAcceso.jsx';
 import { useSesion } from '../context/SesionContext.jsx';
@@ -17,15 +19,12 @@ const HERRAMIENTAS = [
   { icono: 'calendario', nombre: 'Tu siguiente paso, agendado', texto: 'Consulta la disponibilidad de un profesional y reserva una hora de atención.' },
 ];
 
-// Portada pública. Las funciones futuras se presentan sin simular servicios ni resultados.
+// Portada pública, solo para invitados: con sesión iniciada App redirige al perfil.
+// Las funciones futuras se presentan sin simular servicios ni resultados.
 export default function Inicio() {
-  const { sesion, cerrarSesion } = useSesion();
-  const navegar = useNavigate();
-  const destino = sesion ? '/perfil' : '/registro';
-  const salir = async () => {
-    await cerrarSesion();
-    navegar('/iniciar-sesion', { replace: true });
-  };
+  const { aviso, limpiarAviso } = useSesion();
+  // El aviso de cierre de sesión se muestra una sola vez: se descarta al salir de la portada.
+  useEffect(() => limpiarAviso, [limpiarAviso]);
 
   return (
     <div className="inicio">
@@ -38,17 +37,8 @@ export default function Inicio() {
             <a href="#como-empezar">Cómo empezar</a>
           </nav>
           <div className="inicio__accesos">
-            {sesion ? (
-              <>
-                <Link to="/perfil" className="boton boton--compacto">Mi perfil <Icono nombre="usuario" tamano={18} /></Link>
-                <button type="button" className="boton boton--secundario" onClick={salir}>Cerrar sesión</button>
-              </>
-            ) : (
-              <>
-                <Link to="/iniciar-sesion" className="inicio__enlace-acceso">Iniciar sesión</Link>
-                <Link to="/registro" className="boton boton--compacto">Crear cuenta <Icono nombre="flecha" tamano={18} /></Link>
-              </>
-            )}
+            <Link to="/iniciar-sesion" className="inicio__enlace-acceso">Iniciar sesión</Link>
+            <Link to="/registro" className="boton boton--compacto">Crear cuenta <Icono nombre="flecha" tamano={18} /></Link>
           </div>
         </div>
       </header>
@@ -57,12 +47,13 @@ export default function Inicio() {
         <section className="inicio__portada" aria-labelledby="titulo-inicio">
           <div className="inicio__ancho inicio__portada-grilla">
             <div className="inicio__presentacion">
+              {aviso && <Alerta tipo={aviso.tipo}>{aviso.texto}</Alerta>}
               <p className="inicio__antetitulo"><span /> SALUD · DEPORTE · BIENESTAR</p>
               <h1 id="titulo-inicio">Tu bienestar,<br />un paso <span>más cerca.</span></h1>
               <p className="inicio__introduccion">Cada camino empieza contigo. Conoce tus objetivos y descubre una nueva forma de conectar con tu salud, tu alimentación y el movimiento.</p>
               <div className="inicio__acciones">
-                <Link to={destino} className="boton boton--principal boton--compacto">
-                  {sesion ? 'Ir a mi perfil' : 'Comenzar mi camino'} <Icono nombre="flecha" />
+                <Link to="/registro" className="boton boton--principal boton--compacto">
+                  Comenzar mi camino <Icono nombre="flecha" />
                 </Link>
                 <a href="#conoce-fitsearch" className="inicio__enlace">Descubrir FitSearch <Icono nombre="flecha" tamano={18} /></a>
               </div>
@@ -96,7 +87,7 @@ export default function Inicio() {
               <article key={nombre} className={`inicio__herramienta${disponible ? ' inicio__herramienta--disponible' : ''}`}>
                 <div className="inicio__herramienta-superior"><span className="inicio__icono-herramienta"><Icono nombre={icono} tamano={26} /></span><span className={`inicio__estado${disponible ? ' inicio__estado--disponible' : ''}`}>{disponible ? 'Disponible' : 'Próximamente'}</span></div>
                 <h3>{nombre}</h3><p>{texto}</p>
-                {disponible && <Link to={destino} className="inicio__enlace">{sesion ? 'Ver mi perfil' : 'Crear mi perfil'} <Icono nombre="flecha" tamano={18} /></Link>}
+                {disponible && <Link to="/registro" className="inicio__enlace">Crear mi perfil <Icono nombre="flecha" tamano={18} /></Link>}
               </article>
             ))}
           </div>
@@ -104,7 +95,7 @@ export default function Inicio() {
 
         <section id="como-empezar" className="inicio__pasos-fondo" aria-labelledby="titulo-pasos">
           <div className="inicio__ancho inicio__seccion inicio__pasos-contenido">
-            <div className="inicio__titulo-seccion"><p className="inicio__antetitulo">EL PRIMER PASO ES TUYO</p><h2 id="titulo-pasos">Conocerte mejor.<br />Empezar a cuidarte.</h2><p>No necesitas tener todo resuelto. Comienza por lo que importa: tú.</p><Link to={destino} className="inicio__enlace">{sesion ? 'Continuar con mi perfil' : 'Quiero comenzar'} <Icono nombre="flecha" tamano={18} /></Link></div>
+            <div className="inicio__titulo-seccion"><p className="inicio__antetitulo">EL PRIMER PASO ES TUYO</p><h2 id="titulo-pasos">Conocerte mejor.<br />Empezar a cuidarte.</h2><p>No necesitas tener todo resuelto. Comienza por lo que importa: tú.</p><Link to="/registro" className="inicio__enlace">Quiero comenzar <Icono nombre="flecha" tamano={18} /></Link></div>
             <ol className="inicio__pasos">
               <li><span>01</span><div><h3>Crea tu cuenta</h3><p>Regístrate con tu correo y elige tu rol: usuario o profesional.</p></div></li>
               <li><span>02</span><div><h3>Cuéntanos sobre ti</h3><p>Completa tu perfil con tus datos, tus objetivos y tu información de salud.</p></div></li>
@@ -115,12 +106,12 @@ export default function Inicio() {
 
         <section className="inicio__ancho inicio__cierre" aria-labelledby="titulo-cierre">
           <div><p className="inicio__antetitulo">AQUÍ COMIENZA TU CAMINO</p><h2 id="titulo-cierre">Un pequeño paso hoy.<br />Más bienestar mañana.</h2><p>Haz espacio para ti. Nosotros te acompañamos a empezar.</p></div>
-          <Link to={destino} className="boton boton--principal boton--compacto">{sesion ? 'Volver a mi perfil' : 'Crear mi cuenta'} <Icono nombre="flecha" /></Link>
+          <Link to="/registro" className="boton boton--principal boton--compacto">Crear mi cuenta <Icono nombre="flecha" /></Link>
         </section>
       </main>
 
       <footer className="inicio__pie">
-        <div className="inicio__ancho inicio__pie-contenido"><div><Logo /><p>Salud, deporte y bienestar.<br />Más cerca de ti.</p></div><nav aria-label="Enlaces del pie de página"><a href="#conoce-fitsearch">Conoce FitSearch</a><a href="#como-empezar">Cómo empezar</a><Link to={sesion ? '/perfil' : '/iniciar-sesion'}>{sesion ? 'Mi perfil' : 'Iniciar sesión'}</Link></nav><p className="inicio__aviso-salud">FitSearch entrega orientación general y no reemplaza la atención de un profesional de salud.</p></div>
+        <div className="inicio__ancho inicio__pie-contenido"><div><Logo /><p>Salud, deporte y bienestar.<br />Más cerca de ti.</p></div><nav aria-label="Enlaces del pie de página"><a href="#conoce-fitsearch">Conoce FitSearch</a><a href="#como-empezar">Cómo empezar</a><Link to="/iniciar-sesion">Iniciar sesión</Link></nav><p className="inicio__aviso-salud">FitSearch entrega orientación general y no reemplaza la atención de un profesional de salud.</p></div>
         <div className="inicio__ancho inicio__creditos"><span>© {new Date().getFullYear()} FitSearch</span><span>Proyecto Capstone · Duoc UC</span></div>
       </footer>
     </div>

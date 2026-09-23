@@ -21,10 +21,12 @@ export function SesionProvider({ children }) {
     });
   }, [establecer]);
 
+  const limpiarAviso = useCallback(() => setAviso(null), []);
+
   const valor = useMemo(() => ({
     sesion,
     aviso,
-    limpiarAviso: () => setAviso(null),
+    limpiarAviso,
     registrar: async (datos) => {
       establecer(await authService.registrar(datos));
       setAviso({ tipo: 'exito', texto: 'Tu cuenta fue creada y la sesión está iniciada.' });
@@ -41,9 +43,10 @@ export function SesionProvider({ children }) {
         // El token se descarta igual en el cliente aunque el servidor no responda.
       }
       establecer(null);
-      setAviso({ tipo: 'exito', texto: 'Cerraste sesión correctamente.' });
+      // "cierre" le indica a RutaProtegida que la salida fue voluntaria y debe volver a la portada.
+      setAviso({ tipo: 'exito', texto: 'Cerraste sesión correctamente.', origen: 'cierre' });
     },
-  }), [sesion, aviso, establecer]);
+  }), [sesion, aviso, establecer, limpiarAviso]);
 
   return <SesionContext.Provider value={valor}>{children}</SesionContext.Provider>;
 }

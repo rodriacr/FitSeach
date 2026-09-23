@@ -11,12 +11,12 @@ import RestablecerContrasena from './pages/RestablecerContrasena.jsx';
 
 export default function App() {
   const { sesion } = useSesion();
-  // Las pantallas de acceso se muestran como tarjeta centrada, sin encabezado.
+  // La portada y las pantallas de acceso son solo para invitados: con sesión se va al perfil.
   const soloInvitado = (pagina) => (sesion ? <Navigate to="/perfil" replace /> : pagina);
 
   return (
     <Routes>
-      <Route path="/" element={<Inicio />} />
+      <Route path="/" element={soloInvitado(<Inicio />)} />
       <Route path="/registro" element={soloInvitado(<Registro />)} />
       <Route path="/iniciar-sesion" element={soloInvitado(<InicioSesion />)} />
       <Route path="/recuperar-contrasena" element={soloInvitado(<RecuperarContrasena />)} />

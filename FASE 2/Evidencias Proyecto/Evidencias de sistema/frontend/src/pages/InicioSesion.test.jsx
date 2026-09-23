@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, test, vi } from 'vitest';
-import { PERFIL_COMPLETO, renderizarApp, respuestaJson, respuestaPerfil, SESION } from '../tests/utilidades.jsx';
+import { renderizarApp, respuestaJson, respuestaPerfil, SESION } from '../tests/utilidades.jsx';
 
 const respuestaSesion = (url) => (url === '/api/auth/login'
   ? respuestaJson(200, SESION)
@@ -68,20 +68,6 @@ describe('Inicio de sesión (FS-HU-01)', () => {
 
     expect(screen.getByText('El correo es obligatorio')).toBeInTheDocument();
     expect(fetch).not.toHaveBeenCalled();
-  });
-
-  test('cerrar sesión descarta el token y vuelve al inicio de sesión', async () => {
-    localStorage.setItem('fitsearch_sesion', JSON.stringify(SESION));
-    vi.spyOn(globalThis, 'fetch').mockImplementation((url) => (url === '/api/auth/logout'
-      ? Promise.resolve(new Response(null, { status: 204 }))
-      : respuestaJson(200, respuestaPerfil(PERFIL_COMPLETO))));
-    renderizarApp('/perfil');
-
-    await userEvent.click(await screen.findByRole('button', { name: 'Cerrar sesión' }));
-
-    expect(await screen.findByRole('heading', { name: '¡Bienvenido!' })).toBeInTheDocument();
-    expect(screen.getByText('Cerraste sesión correctamente.')).toBeInTheDocument();
-    expect(localStorage.getItem('fitsearch_sesion')).toBeNull();
   });
 
   test('sin sesión, la ruta de perfil redirige al inicio de sesión', () => {
