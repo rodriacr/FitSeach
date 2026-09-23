@@ -1,5 +1,6 @@
 import logoHorizontal from '../assets/logo-fitsearch-horizontal.jpg';
 import iconoLogo from '../assets/logo-fitsearch-icono.png';
+import { Link } from 'react-router-dom';
 
 export function Logo({ className = '' }) {
   return <img src={logoHorizontal} alt="FitSearch — Plataforma inteligente de salud, deporte y bienestar" className={`logo ${className}`} />;
@@ -10,7 +11,7 @@ export default function PantallaAcceso({ children }) {
   return (
     <div className="acceso">
       <section className="acceso__tarjeta">
-        <Logo className="acceso__logo" />
+        <Link to="/" aria-label="FitSearch, volver al inicio"><Logo className="acceso__logo" /></Link>
         <div className="acceso__contenido">{children}</div>
         <img src={iconoLogo} alt="" className="acceso__marca-agua" aria-hidden="true" />
         <svg className="acceso__ola" viewBox="0 0 400 90" preserveAspectRatio="none" aria-hidden="true">
