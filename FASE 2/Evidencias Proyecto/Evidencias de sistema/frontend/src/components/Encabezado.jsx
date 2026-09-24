@@ -9,6 +9,7 @@ export default function Encabezado() {
   return (
     <header className="encabezado">
       <Link to="/perfil" className="encabezado__marca" aria-label="FitSearch, ir a mi perfil"><Logo /></Link>
+      <Link to="/profesionales" className="encabezado__directorio">Buscar profesionales</Link>
       {sesion && (
         <nav className="encabezado__nav" aria-label="Sesión">
           <span className="avatar" aria-hidden="true">{sesion.usuario.nombre.split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0].toUpperCase()).join('')}</span>
