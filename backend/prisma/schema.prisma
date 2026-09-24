@@ -1,0 +1,48 @@
+// Modelo de datos de FitSearch.
+// Fuente: Documento de Arquitectura del Sistema (DAS), sección "Diccionario de datos".
+// Sprint 1: roles, usuarios y perfiles_usuario.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model Rol {
+  id       Int       @id @default(autoincrement())
+  nombre   String    @unique @db.VarChar(30)
+  usuarios Usuario[]
+
+  @@map("roles")
+}
+
+model Usuario {
+  id            Int            @id @default(autoincrement())
+  nombre        String         @db.VarChar(100)
+  correo        String         @unique @db.VarChar(150)
+  passwordHash  String         @map("password_hash") @db.VarChar(255)
+  rolId         Int            @map("rol_id")
+  fechaRegistro DateTime       @default(now()) @map("fecha_registro") @db.DateTime(0)
+  rol           Rol            @relation(fields: [rolId], references: [id], onDelete: Restrict)
+  perfil        PerfilUsuario?
+
+  @@index([rolId])
+  @@map("usuarios")
+}
+
+model PerfilUsuario {
+  id              Int      @id @default(autoincrement())
+  usuarioId       Int      @unique @map("usuario_id")
+  pesoKg          Decimal? @map("peso_kg") @db.Decimal(5, 2)
+  alturaCm        Decimal? @map("altura_cm") @db.Decimal(5, 2)
+  edad            Int?
+  sexo            String?  @db.VarChar(20)
+  actividadFisica String?  @map("actividad_fisica") @db.VarChar(50)
+  usuario         Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@map("perfiles_usuario")
+}
