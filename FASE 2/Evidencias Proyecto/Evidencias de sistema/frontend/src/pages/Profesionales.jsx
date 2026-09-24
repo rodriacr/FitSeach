@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Alerta from '../components/Alerta.jsx';
 import Icono from '../components/Icono.jsx';
+import KinesiologosGoogle from '../components/KinesiologosGoogle.jsx';
 import { listarProfesionales, obtenerEspecialidades } from '../services/profesional.service.js';
 import './Profesionales.css';
 
@@ -88,6 +89,7 @@ export default function Profesionales() {
           </>
         )}
       </div>
+      <KinesiologosGoogle />
     </section>
   );
 }

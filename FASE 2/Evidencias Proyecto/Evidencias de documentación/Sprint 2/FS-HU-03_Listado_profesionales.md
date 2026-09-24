@@ -17,13 +17,17 @@ Se implementan las cuatro tareas del Sprint Backlog, filas 6 a 9:
 
 Los criterios de aceptación se conservan: mostrar tarjetas cuando hay fichas y mostrar un mensaje cuando el filtro no tiene coincidencias. Se agregan estados de carga, error recuperable, limpieza del filtro y paginación para no descargar todo el directorio.
 
-Este cambio no incluye edición del perfil (HU-04), horarios (HU-13), reservas, búsqueda por distancia, mapa incrustado ni profesionales externos de Google Places. El enlace de cada tarjeta abre Google Maps con las coordenadas públicas, sin clave API. FS-HU-05 y FS-HU-06 conservan su alcance de búsqueda geolocalizada y mapa/lista.
+El alcance original de HU-03 no incluye edición del perfil (HU-04), horarios (HU-13), reservas, búsqueda por distancia, mapa incrustado ni profesionales externos de Google Places. El enlace de cada tarjeta abre Google Maps con las coordenadas públicas, sin clave API. FS-HU-05 y FS-HU-06 conservan su alcance de búsqueda geolocalizada y mapa/lista.
 
 ## Implementación y arquitectura
 
 Se mantiene React/Vite y JavaScript, componentes `Encabezado`, `Alerta`, `Icono`, cliente HTTP existente y variables CSS de la identidad Poppins/azul/naranja. Ruta: `/profesionales`; acceso desde «Buscar profesionales» en el encabezado. El directorio es público y solo expone información profesional.
 
-Ajuste visual del acceso: pestaña con icono de búsqueda, área de interacción de al menos 44 px, fondo azul y acento naranja cuando está activa (`aria-current="page"`), estados de foco y hover. Mantiene el texto completo y se adapta al encabezado móvil.
+Ajuste visual del acceso: pestaña discreta con icono de búsqueda, área de interacción de al menos 44 px, fondo suave cuando está activa (`aria-current="page"`), sin azul sólido ni acento naranja. Mantiene el texto completo, foco visible y adaptación al encabezado móvil. La captura hu03_05 corresponde al diseño anterior.
+
+### Ampliación solicitada: kinesiólogos en Google Maps
+
+Se agrega un apartado independiente después del listado de FitSearch. El usuario introduce comuna o ciudad y carga una búsqueda externa de kinesiólogos en un mapa de Google; incluye enlace para abrir los resultados directamente si el mapa no carga. No consulta Places API, no copia resultados a MySQL y no presenta estos negocios como profesionales registrados o verificados en FitSearch. El mapa no se carga hasta que se solicita una búsqueda. Depende de la disponibilidad de Google y de que el navegador permita el contenido incrustado. Esta ampliación no cierra las historias HU-05/HU-06. Se añade una prueba de carga bajo demanda, consulta codificada y enlace externo.
 
 El backend sigue rutas → validadores → controlador → servicio → modelo Prisma. El filtro es una especialidad completa (seleccionada del catálogo o escrita), sin distinguir mayúsculas ni acentos bajo la collation MySQL `utf8mb4_unicode_ci` de la migración. No es búsqueda parcial. Se eliminan espacios externos. La interfaz conserva filtro y página en la URL, reinicia la página al cambiar el filtro y descarta respuestas de solicitudes anteriores.
 
@@ -76,7 +80,7 @@ La prueba local de esta entrega se aisló en `fitsearch_shadow`, comprobada vac�
 ## Validación ejecutada
 
 - Backend: **71 pruebas aprobadas**, incluidas 13 pruebas nuevas de HU-03.
-- Frontend: **44 pruebas aprobadas**, incluidas 6 pruebas nuevas de HU-03.
+- Frontend: **45 pruebas aprobadas**, incluidas 6 pruebas nuevas de HU-03 y una de la búsqueda externa.
 - ESLint aprobado en backend y frontend; compilación Vite aprobada.
 - `npm audit`: 0 vulnerabilidades en ambas carpetas.
 - MySQL real: cinco migraciones aplicadas en una base inicialmente vacía, seed de roles y seed opcional; segunda ejecución sin duplicados.
@@ -105,3 +109,5 @@ Capturas en `Sprint 2/Capturas del sistema/`. Todas muestran datos ficticios.
 ## Pendiente para integrar
 
 Publicar la rama y abrir PR contra `main`, revisión del equipo, aceptación de los criterios por el PO y registrar horas reales por el responsable. No se inventaron estimaciones, horas ni aprobaciones. Este documento complementa el DAS y el backlog con la implementación efectiva de HU-03.
+
+Verificación de la ampliación: búsqueda de Melipilla, Chile en el navegador con mapa y marcadores visibles. Evidencia: `Capturas del sistema/hu03_06_google_separado.png`. Referencia del enlace externo: [Google Maps URLs](https://developers.google.com/maps/documentation/urls/get-started).
