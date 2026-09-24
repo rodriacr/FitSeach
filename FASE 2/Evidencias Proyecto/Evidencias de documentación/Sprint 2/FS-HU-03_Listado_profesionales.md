@@ -23,6 +23,8 @@ Este cambio no incluye edición del perfil (HU-04), horarios (HU-13), reservas, 
 
 Se mantiene React/Vite y JavaScript, componentes `Encabezado`, `Alerta`, `Icono`, cliente HTTP existente y variables CSS de la identidad Poppins/azul/naranja. Ruta: `/profesionales`; acceso desde «Buscar profesionales» en el encabezado. El directorio es público y solo expone información profesional.
 
+Ajuste visual del acceso: pestaña con icono de búsqueda, área de interacción de al menos 44 px, fondo azul y acento naranja cuando está activa (`aria-current="page"`), estados de foco y hover. Mantiene el texto completo y se adapta al encabezado móvil.
+
 El backend sigue rutas → validadores → controlador → servicio → modelo Prisma. El filtro es una especialidad completa (seleccionada del catálogo o escrita), sin distinguir mayúsculas ni acentos bajo la collation MySQL `utf8mb4_unicode_ci` de la migración. No es búsqueda parcial. Se eliminan espacios externos. La interfaz conserva filtro y página en la URL, reinicia la página al cambiar el filtro y descarta respuestas de solicitudes anteriores.
 
 La migración `20260924160000_directorio_profesionales` incorpora el modelo del DAS:
