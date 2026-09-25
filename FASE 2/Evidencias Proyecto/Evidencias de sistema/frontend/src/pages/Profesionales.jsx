@@ -11,6 +11,7 @@ export default function Profesionales() {
   const especialidad = parametros.get('especialidad') || '';
   const pagina = parametros.get('pagina') || '1';
   const [intento, setIntento] = useState(0);
+  const [zona, setZona] = useState('Melipilla, Chile');
   const clave = JSON.stringify([especialidad, pagina, intento]);
   const [resultado, setResultado] = useState(null);
   const cargando = resultado?.clave !== clave;
@@ -26,6 +27,7 @@ export default function Profesionales() {
   const filtrar = (evento) => {
     evento.preventDefault();
     const valor = new FormData(evento.currentTarget).get('especialidad').trim();
+    setZona(new FormData(evento.currentTarget).get('zona').trim() || 'Melipilla, Chile');
     setParametros(valor ? { especialidad: valor } : {});
   };
   const cambiarPagina = (numero) => setParametros({ ...(especialidad ? { especialidad } : {}), pagina: String(numero) });
@@ -45,10 +47,14 @@ export default function Profesionales() {
             maxLength="100" defaultValue={especialidad} placeholder="Todas las especialidades" autoComplete="off" />
           <datalist id="especialidades">{resultado?.especialidades?.map((valor) => <option key={valor} value={valor} />)}</datalist>
         </div>
+        <div className="campo"><label className="campo__etiqueta" htmlFor="zona">Comuna o ciudad del mapa</label><input className="campo__control" id="zona" name="zona" maxLength="150" defaultValue={zona} placeholder="Ej.: Melipilla, Chile" /></div>
         <button type="submit" className="boton boton--principal boton--compacto">Buscar profesionales</button>
         {especialidad && <button type="button" className="boton-texto" onClick={() => setParametros({})}>Limpiar filtro</button>}
       </form>
+      <p className="texto-secundario">Una búsqueda para FitSearch y Google Maps. La comuna se aplica al mapa.</p>
+      <div className="directorio__resultados">
       <div aria-live="polite" aria-busy={cargando}>
+        <h2 className="directorio__titulo-lista">Registrados en FitSearch</h2>
         {cargando ? <p className="directorio__estado" role="status">Cargando profesionales…</p> : resultado.error ? (
           <div className="directorio__estado"><Alerta>{resultado.error}</Alerta>
             <button className="boton boton--secundario boton--compacto" onClick={() => setIntento(intento + 1)}>Reintentar</button>
@@ -89,7 +95,8 @@ export default function Profesionales() {
           </>
         )}
       </div>
-      <KinesiologosGoogle />
+      <KinesiologosGoogle especialidad={especialidad} zona={zona} />
+      </div>
     </section>
   );
 }

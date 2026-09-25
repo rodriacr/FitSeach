@@ -25,9 +25,13 @@ Se mantiene React/Vite y JavaScript, componentes `Encabezado`, `Alerta`, `Icono`
 
 Ajuste visual del acceso: pestaña discreta con icono de búsqueda, área de interacción de al menos 44 px, fondo suave cuando está activa (`aria-current="page"`), sin azul sólido ni acento naranja. Mantiene el texto completo, foco visible y adaptación al encabezado móvil. La captura hu03_05 corresponde al diseño anterior.
 
-### Ampliación solicitada: kinesiólogos en Google Maps
+### Ampliación solicitada: búsqueda unificada con Google Maps
 
-Se agrega un apartado independiente después del listado de FitSearch. El usuario introduce comuna o ciudad y carga una búsqueda externa de kinesiólogos en un mapa de Google; incluye enlace para abrir los resultados directamente si el mapa no carga. No consulta Places API, no copia resultados a MySQL y no presenta estos negocios como profesionales registrados o verificados en FitSearch. El mapa no se carga hasta que se solicita una búsqueda. Depende de la disponibilidad de Google y de que el navegador permita el contenido incrustado. Esta ampliación no cierra las historias HU-05/HU-06. Se añade una prueba de carga bajo demanda, consulta codificada y enlace externo.
+Un único formulario actualiza el filtro de especialidad de FitSearch y la búsqueda del mapa de Google. Incluye comuna o ciudad del mapa, inicialmente Melipilla, Chile. En computador las fichas aparecen junto al mapa; en pantallas pequeñas se apilan dentro de la misma vista. Se retiró el formulario externo separado.
+
+Las tarjetas siguen siendo registros de MySQL y los resultados de Google aparecen como lugares en su mapa, identificados por su origen. La comuna filtra únicamente Google Maps; no se implementa geolocalización de las fichas propias ni se importa información de Google a MySQL. Sin especialidad se buscan profesionales de salud y deporte; con Kinesiología se buscan esos servicios en la zona indicada. El mapa depende de la disponibilidad de Google y del navegador; el enlace externo permite abrir los resultados directamente. No cierra HU-05/HU-06.
+
+Validación del ajuste: 45 pruebas de frontend aprobadas, incluida una que comprueba que el mismo envío actualiza la API y la consulta del mapa; lint y compilación aprobados. La comprobación visual de este último ajuste quedó pendiente porque el control de aprobación de la herramienta de navegador alcanzó su límite de uso. Las capturas anteriores corresponden a versiones previas.
 
 El backend sigue rutas → validadores → controlador → servicio → modelo Prisma. El filtro es una especialidad completa (seleccionada del catálogo o escrita), sin distinguir mayúsculas ni acentos bajo la collation MySQL `utf8mb4_unicode_ci` de la migración. No es búsqueda parcial. Se eliminan espacios externos. La interfaz conserva filtro y página en la URL, reinicia la página al cambiar el filtro y descarta respuestas de solicitudes anteriores.
 

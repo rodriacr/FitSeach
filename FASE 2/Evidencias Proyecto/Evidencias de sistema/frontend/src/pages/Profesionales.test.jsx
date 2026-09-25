@@ -2,17 +2,16 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, test, vi } from 'vitest';
 import { renderizarApp, respuestaJson } from '../tests/utilidades.jsx';
-import { render } from '@testing-library/react';
-import KinesiologosGoogle from '../components/KinesiologosGoogle.jsx';
 
-test('Google Maps se carga solo al buscar una zona y queda identificado como externo', async () => {
-  render(<KinesiologosGoogle />);
-  expect(screen.queryByTitle(/Google Maps/)).not.toBeInTheDocument();
-  await userEvent.type(screen.getByLabelText('Comuna o ciudad'), 'Melipilla, Chile');
-  await userEvent.click(screen.getByRole('button', { name: 'Buscar en Google Maps' }));
-  expect(screen.getByTitle('Kinesiólogos en Melipilla, Chile — Google Maps')).toHaveAttribute('src', expect.stringContaining('Melipilla%2C%20Chile'));
-  expect(screen.getByRole('link', { name: /Ver kinesiólogos/ })).toHaveAttribute('href', expect.stringContaining('api=1&query='));
-  expect(screen.getByText(/no indican que estén registrados en FitSearch/)).toBeInTheDocument();
+test('la búsqueda actualiza a la vez FitSearch y Google Maps', async () => {
+  const fetch = simular(); renderizarApp('/profesionales');
+  await screen.findByRole('heading', { name: 'Ana Demo' });
+  await userEvent.type(screen.getByLabelText('Especialidad'), 'Kinesiología');
+  await userEvent.clear(screen.getByLabelText('Comuna o ciudad del mapa'));
+  await userEvent.type(screen.getByLabelText('Comuna o ciudad del mapa'), 'Santiago');
+  await userEvent.click(screen.getByRole('button', { name: 'Buscar profesionales' }));
+  expect(await screen.findByTitle('Kinesiología en Santiago — Google Maps')).toHaveAttribute('src', expect.stringContaining('Santiago'));
+  expect(fetch.mock.calls.some(([url]) => url.includes('especialidad=Kinesiolog%C3%ADa'))).toBe(true);
 });
 
 const ficha = { id: 1, nombre: 'Ana Demo', especialidad: 'Nutrición', descripcion: 'Atención nutricional', ubicacionLat: -33.686, ubicacionLng: -71.215, establecimiento: { nombre: 'Consulta Demo', direccion: 'Melipilla' } };

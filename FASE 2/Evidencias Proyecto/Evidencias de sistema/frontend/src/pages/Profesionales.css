@@ -43,3 +43,11 @@
   .directorio__filtro .boton { width: 100%; }
   .directorio__paginacion .boton { min-width: 0; width: auto; }
 }
+
+/* Búsqueda unificada: fichas y mapa comparten el formulario. */
+.directorio__resultados { display: grid; gap: 1.5rem; align-items: start; }
+.directorio__resultados > * { min-width: 0; }
+.directorio__google { margin-top: 0; padding: 1.25rem; background: var(--color-superficie); border: 1px solid var(--color-borde); border-radius: var(--radio); }
+.directorio__google h2, .directorio__titulo-lista { margin-top: 0; }
+.directorio__fuente { font-size: .8rem; color: var(--color-texto-secundario); }
+@media (min-width: 900px) { .directorio__resultados { grid-template-columns: minmax(0,1fr) minmax(0,1fr); } .directorio__lista { grid-template-columns: 1fr; } .directorio__google { position: sticky; top: 6rem; } .directorio__google iframe { height: 500px; } }
