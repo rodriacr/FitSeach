@@ -5,6 +5,7 @@ import { useSesion } from './context/SesionContext.jsx';
 import InicioSesion from './pages/InicioSesion.jsx';
 import Inicio from './pages/Inicio.jsx';
 import Perfil from './pages/Perfil.jsx';
+import Profesionales from './pages/Profesionales.jsx';
 import RecuperarContrasena from './pages/RecuperarContrasena.jsx';
 import Registro from './pages/Registro.jsx';
 import RestablecerContrasena from './pages/RestablecerContrasena.jsx';
@@ -21,6 +22,7 @@ export default function App() {
       <Route path="/iniciar-sesion" element={soloInvitado(<InicioSesion />)} />
       <Route path="/recuperar-contrasena" element={soloInvitado(<RecuperarContrasena />)} />
       <Route path="/restablecer-contrasena" element={<RestablecerContrasena />} />
+      <Route path="/profesionales" element={<><Encabezado /><main className="contenedor contenedor--ancho"><Profesionales /></main></>} />
       <Route element={<RutaProtegida />}>
         <Route path="/perfil" element={<><Encabezado /><main className="contenedor contenedor--ancho"><Perfil /></main></>} />
       </Route>
