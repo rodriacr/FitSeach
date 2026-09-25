@@ -39,6 +39,7 @@ export default function Profesionales() {
         <span className="directorio__antetitulo">Profesionales de FitSearch</span>
         <h1>Encuentra apoyo para tu bienestar</h1>
         <p>Explora profesionales de salud y deporte. Conoce su especialidad y dónde atienden.</p>
+      <div className="directorio__ventajas"><span><Icono nombre="buscar" tamano={17} /> Busca por especialidad</span><span><Icono nombre="maletin" tamano={17} /> Conoce sus servicios</span><span><Icono nombre="flecha" tamano={17} /> Encuentra dónde atienden</span></div>
       </header>
       <form className="directorio__filtro" onSubmit={filtrar} key={JSON.stringify([especialidad, zona])}>
         <div className="campo">
@@ -52,6 +53,12 @@ export default function Profesionales() {
         {(especialidad || zona) && <button type="button" className="boton-texto" onClick={() => setParametros({})}>Limpiar filtro</button>}
       </form>
       <p className="texto-secundario">Filtra los registrados en FitSearch y el mapa de Google por especialidad y comuna.</p>
+      {resultado?.especialidades?.length > 0 && <nav className="directorio__categorias" aria-label="Explorar especialidades">
+        <span>Explora:</span>
+        <button type="button" aria-pressed={!especialidad} onClick={() => setParametros(zona ? { comuna: zona } : {})}>Todas</button>
+        {resultado.especialidades.map((nombre) => <button key={nombre} type="button" aria-pressed={nombre === especialidad}
+          onClick={() => setParametros({ especialidad: nombre, ...(zona ? { comuna: zona } : {}) })}>{nombre}</button>)}
+      </nav>}
       <div className="directorio__resultados">
       <div aria-live="polite" aria-busy={cargando}>
         <h2 className="directorio__titulo-lista">Registrados en FitSearch</h2>
@@ -71,12 +78,14 @@ export default function Profesionales() {
             <div className="directorio__lista">
               {resultado.profesionales.map((profesional) => (
                 <article className="directorio__tarjeta" key={profesional.id}>
+                  <div className="directorio__origen"><span>FICHA FITSEARCH</span><Icono nombre="maletin" tamano={16} /></div>
                   <div className="directorio__identidad">
                     <span className="directorio__avatar" aria-hidden="true">{profesional.nombre.split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0]).join('')}</span>
                     <div><h2>{profesional.nombre}</h2><span className="directorio__especialidad">{profesional.especialidad}</span></div>
                   </div>
-                  {profesional.descripcion && <p className="directorio__descripcion">{profesional.descripcion}</p>}
+                  <div className="directorio__servicios"><h3>Sobre su atención</h3><p className="directorio__descripcion">{profesional.descripcion || 'Este profesional todavía no ha añadido una descripción de sus servicios.'}</p></div>
                   <div className="directorio__ubicacion">
+                    <span className="directorio__dato">LUGAR DE ATENCIÓN</span>
                     <strong>{profesional.establecimiento?.nombre || 'Ubicación de atención'}</strong>
                     <p>{profesional.establecimiento?.direccion || `Coordenadas: ${profesional.ubicacionLat}, ${profesional.ubicacionLng}`}</p>
                   </div>
@@ -84,6 +93,7 @@ export default function Profesionales() {
                     target="_blank" rel="noopener noreferrer" aria-label={`Ver ubicación de ${profesional.nombre} en Google Maps (nueva pestaña)`}>
                     Ver ubicación <Icono nombre="flecha" tamano={18} />
                   </a>
+                  <a className="directorio__ruta" href={'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(profesional.ubicacionLat + ',' + profesional.ubicacionLng)} target="_blank" rel="noopener noreferrer" aria-label={'Cómo llegar a la atención de ' + profesional.nombre}>Cómo llegar ↗</a>
                 </article>
               ))}
             </div>
@@ -95,7 +105,10 @@ export default function Profesionales() {
           </>
         )}
       </div>
-      <KinesiologosGoogle especialidad={especialidad} zona={zona} />
+      <div className="directorio__lateral"><KinesiologosGoogle especialidad={especialidad} zona={zona} />
+        <section className="directorio__ayuda"><span className="directorio__antetitulo">Antes de elegir</span><h2>Encuentra una atención que se ajuste a ti</h2>
+          <ul><li><strong>Revisa la especialidad.</strong> Busca un área relacionada con lo que necesitas.</li><li><strong>Comprueba la ubicación.</strong> Revisa la dirección y cómo llegar antes de trasladarte.</li><li><strong>Confirma los detalles.</strong> Consulta directamente al profesional por horarios, valores y servicios.</li></ul>
+        </section></div>
       </div>
     </section>
   );

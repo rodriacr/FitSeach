@@ -117,3 +117,9 @@ Publicar la rama y abrir PR contra `main`, revisión del equipo, aceptación de 
 Verificación de la ampliación: búsqueda de Melipilla, Chile en el navegador con mapa y marcadores visibles. Evidencia: `Capturas del sistema/hu03_06_google_separado.png`. Referencia del enlace externo: [Google Maps URLs](https://developers.google.com/maps/documentation/urls/get-started).
 
 Filtro de comuna: `GET /api/profesionales?comuna=Melipilla&especialidad=Nutrición`; texto opcional, hasta 150 caracteres, sin parámetros repetidos. La URL conserva comuna y especialidad al paginar y reinicia a página 1 al buscar. Verificación MySQL: Melipilla devuelve dos fichas demo; combinada con Nutrición devuelve una; comuna inexistente devuelve cero. Frontend 45 pruebas, backend 73, lint y build aprobados.
+
+## Mejora visual del directorio
+
+Se mantiene el estilo azul y naranja de FitSearch. Se añade una cabecera con orientación de búsqueda, accesos rápidos a las especialidades del catálogo, identificación de origen de las fichas, descripción de la atención, bloque de ubicación y enlace Cómo llegar. La columna del mapa incorpora una guía para comparar especialidad, ubicación y detalles de atención. No se inventan reseñas, horarios, precios ni antecedentes profesionales.
+
+Validación: 45 pruebas frontend aprobadas, ESLint y compilación Vite aprobados. En navegador se comprobó el acceso rápido Kinesiología (una ficha coincidente) y el diseño móvil con viewport de 390 px sin desbordamiento horizontal (ancho útil y scrollWidth de 375 px). Evidencia: `Capturas del sistema/hu03_07_directorio_mejorado.png`. Durante esta comprobación el iframe externo de Google permaneció en blanco; no se considera validada su carga en esta revisión. El enlace externo sigue disponible y esta mejora no incorpora tarjetas importadas desde Google.
