@@ -29,6 +29,9 @@ model Usuario {
   passwordHash       String?             @map("password_hash") @db.VarChar(255)
   googleId           String?             @unique @map("google_id") @db.VarChar(255)
   rolId              Int                 @map("rol_id")
+  // El registro crea toda cuenta como "usuario"; queda en true cuando la persona elige su tipo de cuenta
+  // en el primer paso del asistente de perfil (FS-HU-02).
+  rolConfirmado      Boolean             @default(false) @map("rol_confirmado")
   fechaRegistro      DateTime            @default(now()) @map("fecha_registro") @db.DateTime(0)
   rol                Rol                 @relation(fields: [rolId], references: [id], onDelete: Restrict)
   perfil             PerfilUsuario?

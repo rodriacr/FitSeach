@@ -81,6 +81,8 @@ a { color: var(--color-primario); }
 }
 .boton-social:hover:not(:disabled) { background: var(--color-superficie-suave); }
 .boton-social:disabled { cursor: not-allowed; opacity: 0.6; }
+.acceso-google { display: flex; justify-content: center; min-height: 2.75rem; }
+.acceso-google__estado { margin: 0.75rem 0 0; text-align: center; font-size: 0.9rem; color: var(--color-texto-secundario); }
 .pie-acceso { position: relative; z-index: 1; margin: 1.5rem 0 0; text-align: center; font-size: 0.9rem; color: var(--color-texto-secundario); }
 
 .selector-rol { border: 0; padding: 0; margin: 0 0 1.25rem; }
@@ -94,6 +96,12 @@ a { color: var(--color-primario); }
 .selector-rol__opcion input { position: absolute; opacity: 0; pointer-events: none; }
 .selector-rol__opcion:has(input:focus-visible) { outline: 3px solid rgb(244 123 32 / 45%); outline-offset: 2px; }
 .selector-rol__opcion--activa { background: linear-gradient(180deg, var(--color-primario-claro), var(--color-primario)); border-color: var(--color-primario); color: #fff; }
+/* Variante en tarjetas para el tipo de cuenta del asistente de perfil (FS-HU-02) */
+.selector-rol--tarjetas .selector-rol__opcion { flex-direction: column; gap: 0.3rem; min-height: 8.5rem; padding: 1.1rem 0.9rem; }
+.selector-rol__etiqueta { font-weight: 600; font-size: 1rem; }
+.selector-rol__descripcion { font-weight: 400; font-size: 0.8rem; line-height: 1.3; color: var(--color-texto-secundario); }
+.selector-rol__opcion--activa .selector-rol__descripcion { color: rgb(255 255 255 / 85%); }
+.nota-tipo-cuenta { display: flex; align-items: center; gap: 0.4rem; margin: 0 0 1.25rem; font-size: 0.85rem; }
 
 /* ---------- Campos de formulario ---------- */
 .campo { display: flex; flex-direction: column; margin-bottom: 1rem; }

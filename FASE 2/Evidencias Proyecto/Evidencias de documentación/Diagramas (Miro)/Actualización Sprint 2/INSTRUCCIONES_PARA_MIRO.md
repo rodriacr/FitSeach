@@ -11,6 +11,8 @@ Preparado el 22-09-2026 para **Luis Méndez**.
 
 Clases, modelos de datos y secuencias son diagramas de Miro generados desde código Mermaid (se editan con doble clic). Casos de uso, estados, componentes y despliegue están armados con formas y conectores.
 
+**Actualización (24-09-2026):** el diagrama **06 Secuencia del asistente de perfil** cambió, porque el tipo de cuenta (rol) pasó del registro al primer paso del asistente (DAS, decisión D21) y el asistente quedó de 5 pasos. Ya están actualizados el PNG/SVG/MMD de esta carpeta, la Ilustración 6 del DAS y el marco del tablero de Miro (que además quedó más ancho y más bajo para ajustarse al diagrama nuevo). Solo falta que Luis exporte el PNG desde Miro si corrige algo.
+
 **Tarea que le queda a Luis:**
 1. Revisar cada marco nuevo contra la tabla "Los diez diagramas" de más abajo y corregir en Miro lo que haga falta.
 2. Borrar los diagramas antiguos de la izquierda, salvo la secuencia del registro de comida, que no cambia.

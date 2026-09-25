@@ -18,6 +18,12 @@ export function guardarSesion(sesion, recordar = false) {
   if (sesion) (recordar ? localStorage : sessionStorage).setItem(CLAVE_SESION, JSON.stringify(sesion));
 }
 
+// Reemplaza la sesión guardada conservando dónde estaba: el backend emite un token nuevo cuando
+// la persona confirma su tipo de cuenta, porque el rol viaja dentro del token.
+export function actualizarSesionGuardada(sesion) {
+  guardarSesion(sesion, localStorage.getItem(CLAVE_SESION) !== null);
+}
+
 export class ErrorApi extends Error {
   constructor(estado, mensaje, detalles = {}) {
     super(mensaje);

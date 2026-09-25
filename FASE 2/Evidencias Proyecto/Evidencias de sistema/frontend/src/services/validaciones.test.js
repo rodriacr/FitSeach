@@ -3,17 +3,17 @@ import { validarInicioSesion, validarPerfil, validarRegistro, validarRestablecer
 
 describe('validaciones', () => {
   test('registro válido no tiene errores', () => {
-    expect(validarRegistro({ nombre: 'Ana Pérez', correo: 'ana@correo.cl', password: 'ClaveSegura123', confirmacion: 'ClaveSegura123', rol: 'profesional' })).toEqual({});
+    expect(validarRegistro({ nombre: 'Ana Pérez', correo: 'ana@correo.cl', password: 'ClaveSegura123', confirmacion: 'ClaveSegura123' })).toEqual({});
   });
 
   test('registro con contraseña corta y correo inválido marca ambos campos', () => {
-    const errores = validarRegistro({ nombre: 'Ana', correo: 'ana@', password: '123', confirmacion: '123', rol: 'usuario' });
+    const errores = validarRegistro({ nombre: 'Ana', correo: 'ana@', password: '123', confirmacion: '123' });
     expect(Object.keys(errores).sort()).toEqual(['correo', 'password']);
   });
 
-  test('FS-HU-17: registro con contraseñas distintas o sin rol válido', () => {
-    const errores = validarRegistro({ nombre: 'Ana Pérez', correo: 'ana@correo.cl', password: 'ClaveSegura123', confirmacion: 'OtraClave123', rol: 'administrador' });
-    expect(errores).toEqual({ confirmacion: 'Las contraseñas no coinciden', rol: 'Selecciona tu rol' });
+  test('FS-HU-17: registro con contraseñas distintas', () => {
+    const errores = validarRegistro({ nombre: 'Ana Pérez', correo: 'ana@correo.cl', password: 'ClaveSegura123', confirmacion: 'OtraClave123' });
+    expect(errores).toEqual({ confirmacion: 'Las contraseñas no coinciden' });
   });
 
   test('FS-HU-15: restablecer exige contraseña válida y confirmación igual', () => {

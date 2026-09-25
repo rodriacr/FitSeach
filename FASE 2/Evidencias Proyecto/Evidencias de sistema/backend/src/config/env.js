@@ -17,6 +17,8 @@ module.exports = {
   // Dirección del frontend usada para armar el enlace de recuperación de contraseña.
   urlFrontend: (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, ''),
   recuperacionMinutos: Number(process.env.RECOVERY_TOKEN_MINUTES) || 60,
+  // ID de cliente OAuth de Google (FS-HU-16). No es secreto, pero sin él el botón de Google queda desactivado.
+  googleClientId: process.env.GOOGLE_CLIENT_ID || '',
   // Envío de correos por SMTP (DAS, D14). Si faltan datos, el enlace se muestra en la consola del backend.
   smtp: {
     host: process.env.SMTP_HOST || 'smtp.gmail.com',

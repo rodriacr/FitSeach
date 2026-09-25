@@ -23,12 +23,19 @@ const registro = [
     .withMessage(`El nombre debe tener entre ${usuario.nombre.min} y ${usuario.nombre.max} caracteres`),
   correo(),
   password('password'),
-  body('rol').optional().isIn(['usuario', 'profesional']).withMessage('Selecciona un rol válido'),
 ];
 
 const inicioSesion = [
   correo(),
   body('password').notEmpty().withMessage('La contraseña es obligatoria'),
+  body('recordar').optional().isBoolean({ strict: true }).withMessage('El valor de "Recordarme" no es válido'),
+];
+
+// El token de Google es un JWT largo; solo se comprueba la forma, la firma la valida google.service.
+const inicioSesionGoogle = [
+  body('credencial')
+    .isString().withMessage('No fue posible validar tu cuenta de Google. Intenta nuevamente').bail()
+    .isLength({ min: 20, max: 4096 }).withMessage('No fue posible validar tu cuenta de Google. Intenta nuevamente'),
   body('recordar').optional().isBoolean({ strict: true }).withMessage('El valor de "Recordarme" no es válido'),
 ];
 
@@ -40,4 +47,4 @@ const restablecer = [
   password('password'),
 ];
 
-module.exports = { registro, inicioSesion, solicitarRecuperacion, restablecer };
+module.exports = { registro, inicioSesion, inicioSesionGoogle, solicitarRecuperacion, restablecer };

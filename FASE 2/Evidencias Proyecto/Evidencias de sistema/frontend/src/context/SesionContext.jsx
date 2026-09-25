@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { guardarSesion, leerSesionGuardada, registrarManejadorSesionExpirada } from '../services/api.js';
+import { actualizarSesionGuardada, guardarSesion, leerSesionGuardada, registrarManejadorSesionExpirada } from '../services/api.js';
 import * as authService from '../services/auth.service.js';
 
 const SesionContext = createContext(null);
@@ -35,6 +35,21 @@ export function SesionProvider({ children }) {
       const nuevaSesion = await authService.iniciarSesion(datos);
       establecer(nuevaSesion, Boolean(datos.recordar));
       setAviso({ tipo: 'exito', texto: `Sesión iniciada como ${nuevaSesion.usuario.nombre}.` });
+    },
+    iniciarSesionConGoogle: async ({ credencial, recordar = false }) => {
+      const { token, usuario, cuentaNueva } = await authService.iniciarSesionConGoogle({ credencial, recordar });
+      establecer({ token, usuario }, recordar);
+      setAviso({
+        tipo: 'exito',
+        texto: cuentaNueva
+          ? `Tu cuenta fue creada con Google y la sesión está iniciada como ${usuario.nombre}.`
+          : `Sesión iniciada como ${usuario.nombre}.`,
+      });
+    },
+    // El rol viaja dentro del token: al confirmar el tipo de cuenta se reemplaza la sesión guardada.
+    actualizarSesion: (nuevaSesion) => {
+      actualizarSesionGuardada(nuevaSesion);
+      setSesion(nuevaSesion);
     },
     cerrarSesion: async () => {
       try {

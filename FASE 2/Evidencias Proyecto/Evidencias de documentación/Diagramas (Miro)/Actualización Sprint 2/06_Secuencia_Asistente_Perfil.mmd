@@ -10,17 +10,21 @@ sequenceDiagram
   B-->>F: perfil, objetivos, salud, pasos pendientes y kcal/día
   alt hay pasos pendientes
     F-->>U: Asistente en el primer paso pendiente
-    U->>F: Paso 1: peso, altura, edad, sexo y actividad física
+    U->>F: Paso 1: tipo de cuenta (usuario o profesional)
+    F->>B: PUT /api/perfil/tipo-cuenta
+    B->>D: Guardar rol y rol_confirmado
+    B-->>F: Token nuevo con el rol confirmado
+    U->>F: Paso 2: peso, altura, edad, sexo y actividad física
     F->>B: PUT /api/perfil
     B->>D: Guardar datos básicos
-    U->>F: Paso 2: objetivo, comidas al día y horas de sueño
+    U->>F: Paso 3: objetivo, comidas al día y horas de sueño
     F->>B: PUT /api/perfil/objetivos
     B->>D: Guardar objetivos en perfiles_usuario
-    U->>F: Paso 3: condiciones, medicamentos y alergias
+    U->>F: Paso 4: condiciones, medicamentos y alergias
     F->>B: PUT /api/perfil/salud
     B->>B: Validar valores contra shared/reglas.json ("Ninguna" excluyente)
     B->>D: Guardar en informacion_salud
-    F-->>U: Paso 4: "¡Información guardada!" + kcal/día
+    F-->>U: Paso 5: "¡Información guardada!" + kcal/día
   else perfil completo
     F-->>U: Resumen con "Editar" por sección
     U->>F: Editar una sección y "Guardar cambios"

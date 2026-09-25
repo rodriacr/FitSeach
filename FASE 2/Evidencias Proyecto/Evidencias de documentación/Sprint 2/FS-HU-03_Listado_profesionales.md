@@ -96,17 +96,17 @@ Las pruebas automatizadas habituales simulan la base/fetch; las verificaciones M
 
 ## Casos de prueba y evidencias
 
-Se agregan CP-024 a CP-030 en la planilla de pruebas, sin modificar los resultados anteriores.
+Se agregan CP-029 a CP-035 en la planilla de pruebas, sin modificar los resultados anteriores.
 
 | Caso | Acción y resultado comprobado | Evidencia |
 |---|---|---|
-| CP-024 | Abrir el directorio: nombre, especialidad y ubicación en tres tarjetas | `hu03_01_listado.png` |
-| CP-025 | Buscar Nutrición: solo Ana Demo; limpiar recupera las tres fichas | `hu03_02_filtro.png` |
-| CP-026 | Buscar Inexistente: mensaje sin coincidencias y opción de limpiar | `hu03_03_sin_resultados.png` |
-| CP-027 | Revisar a 390 px: tarjetas en una columna, controles utilizables y sin desborde | `hu03_04_movil.png` |
-| CP-028 | Consultar API: excluye correo de acceso, contraseña, usuario y salud | Prueba automatizada y MySQL real descritas arriba |
-| CP-029 | Trece fichas de una especialidad: dos páginas (12 + 1), sin duplicados | Verificación con MySQL real descrita arriba |
-| CP-030 | Página inválida responde 400; fallo de red muestra Reintentar y recupera el listado | Jest y Vitest |
+| CP-029 | Abrir el directorio: nombre, especialidad y ubicación en tres tarjetas | `hu03_01_listado.png` |
+| CP-030 | Buscar Nutrición: solo Ana Demo; limpiar recupera las tres fichas | `hu03_02_filtro.png` |
+| CP-031 | Buscar Inexistente: mensaje sin coincidencias y opción de limpiar | `hu03_03_sin_resultados.png` |
+| CP-032 | Revisar a 390 px: tarjetas en una columna, controles utilizables y sin desborde | `hu03_04_movil.png` |
+| CP-033 | Consultar API: excluye correo de acceso, contraseña, usuario y salud | Prueba automatizada y MySQL real descritas arriba |
+| CP-034 | Trece fichas de una especialidad: dos páginas (12 + 1), sin duplicados | Verificación con MySQL real descrita arriba |
+| CP-035 | Página inválida responde 400; fallo de red muestra Reintentar y recupera el listado | Jest y Vitest |
 
 Capturas en `Sprint 2/Capturas del sistema/`. Todas muestran datos ficticios.
 
@@ -123,3 +123,7 @@ Filtro de comuna: `GET /api/profesionales?comuna=Melipilla&especialidad=Nutrici�
 Se mantiene el estilo azul y naranja de FitSearch. Se añade una cabecera con orientación de búsqueda, accesos rápidos a las especialidades del catálogo, identificación de origen de las fichas, descripción de la atención, bloque de ubicación y enlace Cómo llegar. La columna del mapa incorpora una guía para comparar especialidad, ubicación y detalles de atención. No se inventan reseñas, horarios, precios ni antecedentes profesionales.
 
 Validación: 45 pruebas frontend aprobadas, ESLint y compilación Vite aprobados. En navegador se comprobó el acceso rápido Kinesiología (una ficha coincidente) y el diseño móvil con viewport de 390 px sin desbordamiento horizontal (ancho útil y scrollWidth de 375 px). Evidencia: `Capturas del sistema/hu03_07_directorio_mejorado.png`. Durante esta comprobación el iframe externo de Google permaneció en blanco; no se considera validada su carga en esta revisión. El enlace externo sigue disponible y esta mejora no incorpora tarjetas importadas desde Google.
+
+## Integración con main del 25-09-2026
+
+Se fusionó cbfef5f (HU-16 y cambio de tipo de cuenta en HU-02), conservando el directorio y Google Places. Se preservaron CP-024 a CP-028 del equipo y se renumeraron los casos de HU-03 como CP-029 a CP-035. El backlog combina ambos avances. Nueva migración rol_confirmado aplicada con migrate deploy en la base local de pruebas, sin reset. Validación posterior: 92 pruebas backend, 53 frontend, ambos lint y build frontend aprobados. API de salud y listado filtrado y frontend responden 200. La autenticación Google y Places requieren sus respectivas variables; no se verificaron accesos reales a Google. La rama diagramas-miro-sprint2 no forma parte de esta fusión de main.
