@@ -164,12 +164,13 @@ La aplicación queda en `http://localhost:5173`. Vite reenvía las llamadas a `/
 | Método | Ruta | Autenticación | Descripción |
 |---|---|---|---|
 | GET | `/api/salud` | No | Estado de la API |
-| POST | `/api/auth/registro` | No | Crea la cuenta con el rol elegido (`usuario` o `profesional`) y devuelve el token |
+| POST | `/api/auth/registro` | No | Crea la cuenta (siempre con el rol `usuario`) y devuelve el token; el tipo de cuenta se elige en el perfil |
 | POST | `/api/auth/login` | No | Inicia sesión y devuelve el token (`recordar: true` para una sesión de 30 días) |
 | POST | `/api/auth/recuperar` | No | Envía el enlace para restablecer la contraseña (responde lo mismo exista o no el correo) |
 | POST | `/api/auth/restablecer` | No | Cambia la contraseña con el código del enlace (vence en 60 minutos y sirve una vez) |
 | POST | `/api/auth/logout` | Bearer JWT | Cierra la sesión |
 | GET | `/api/perfil` | Bearer JWT | Datos del usuario, perfil completo, pasos pendientes del asistente y requerimiento calórico estimado |
+| PUT | `/api/perfil/tipo-cuenta` | Bearer JWT | Guarda el tipo de cuenta elegido en el paso 1 del asistente (`usuario` o `profesional`) y devuelve un token nuevo con el rol confirmado (FS-HU-02) |
 | PUT | `/api/perfil` | Bearer JWT | Guarda peso, altura, edad, sexo y actividad física |
 | PUT | `/api/perfil/objetivos` | Bearer JWT | Guarda objetivo principal, comidas al día y horas de sueño (FS-HU-18) |
 | PUT | `/api/perfil/salud` | Bearer JWT | Guarda condiciones médicas, medicamentos y alergias (FS-HU-19; solo valores de `shared/reglas.json`) |

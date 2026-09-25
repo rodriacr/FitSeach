@@ -14,9 +14,20 @@ export const catalogoSalud = reglas.salud;
 // Etiqueta legible de un valor de catálogo (para el resumen del perfil).
 export const etiquetaDe = (opciones, valor) => opciones.find((opcion) => opcion.valor === valor)?.etiqueta ?? '—';
 
-export const ROLES_REGISTRO = [
-  { valor: 'usuario', etiqueta: 'Usuario' },
-  { valor: 'profesional', etiqueta: 'Profesional' },
+// Tipo de cuenta del paso 1 del asistente de perfil (FS-HU-02); ya no se elige en el registro.
+export const OPCIONES_TIPO_CUENTA = [
+  {
+    valor: 'usuario',
+    etiqueta: 'Usuario',
+    icono: 'usuario',
+    descripcion: 'Quiero cuidar mi salud, mi alimentación y mi rendimiento.',
+  },
+  {
+    valor: 'profesional',
+    etiqueta: 'Profesional',
+    icono: 'maletin',
+    descripcion: 'Ofrezco servicios de salud, deporte o nutrición.',
+  },
 ];
 
 function validarPasswordNueva(password, confirmacion) {
@@ -29,14 +40,13 @@ function validarPasswordNueva(password, confirmacion) {
   return errores;
 }
 
-export function validarRegistro({ nombre, correo, password, confirmacion, rol }) {
+export function validarRegistro({ nombre, correo, password, confirmacion }) {
   const errores = {};
   const { usuario } = reglas;
   if (vacio(nombre)) errores.nombre = 'El nombre es obligatorio';
   else if (nombre.trim().length < usuario.nombre.min || nombre.trim().length > usuario.nombre.max)
     errores.nombre = `El nombre debe tener entre ${usuario.nombre.min} y ${usuario.nombre.max} caracteres`;
   Object.assign(errores, validarCorreo(correo), validarPasswordNueva(password, confirmacion));
-  if (!ROLES_REGISTRO.some((opcion) => opcion.valor === rol)) errores.rol = 'Selecciona tu rol';
   return errores;
 }
 

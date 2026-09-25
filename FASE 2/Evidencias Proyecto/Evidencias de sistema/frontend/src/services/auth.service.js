@@ -1,11 +1,16 @@
 import { solicitar } from './api.js';
 
-export function registrar({ nombre, correo, password, rol }) {
-  return solicitar('/auth/registro', { metodo: 'POST', cuerpo: { nombre, correo, password, rol }, conSesion: false });
+export function registrar({ nombre, correo, password }) {
+  return solicitar('/auth/registro', { metodo: 'POST', cuerpo: { nombre, correo, password }, conSesion: false });
 }
 
 export function iniciarSesion({ correo, password, recordar = false }) {
   return solicitar('/auth/login', { metodo: 'POST', cuerpo: { correo, password, recordar }, conSesion: false });
+}
+
+// "Continuar con Google" (FS-HU-16): se envía el token de identidad que entrega Google en el navegador.
+export function iniciarSesionConGoogle({ credencial, recordar = false }) {
+  return solicitar('/auth/google', { metodo: 'POST', cuerpo: { credencial, recordar }, conSesion: false });
 }
 
 export function cerrarSesion() {

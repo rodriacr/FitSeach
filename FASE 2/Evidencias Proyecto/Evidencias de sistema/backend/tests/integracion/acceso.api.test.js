@@ -18,37 +18,31 @@ const TOKEN = 'a'.repeat(64);
 const HASH_TOKEN = crypto.createHash('sha256').update(TOKEN).digest('hex');
 const enUnaHora = () => new Date(Date.now() + 60 * 60 * 1000);
 
-describe('FS-HU-17: registro con rol y "Recordarme"', () => {
+describe('FS-HU-17: registro y "Recordarme"', () => {
   beforeEach(() => jest.resetAllMocks());
 
-  test('escenario 1: registra una cuenta con rol profesional', async () => {
+  // Desde el 24-09-2026 el tipo de cuenta se elige en el asistente de perfil (FS-HU-02), no al registrarse.
+  test('escenario 1: toda cuenta nueva se crea como usuario, sin poder elegir el rol', async () => {
     usuarioModel.buscarPorCorreo.mockResolvedValue(null);
-    usuarioModel.crearConPerfil.mockImplementation(async (datos) => usuarioDePrueba({ rol: { id: 2, nombre: datos.rolNombre } }));
+    usuarioModel.crearConPerfil.mockImplementation(async (datos) => usuarioDePrueba({ rol: { id: 1, nombre: datos.rolNombre } }));
 
+    // Aunque la petición traiga un rol, el registro lo ignora.
     const respuesta = await request(app).post('/api/auth/registro')
       .send({ nombre: 'Ana Pérez', correo: 'ana@correo.cl', password: PASSWORD, rol: 'profesional' });
 
     expect(respuesta.status).toBe(201);
-    expect(respuesta.body.usuario.rol).toBe('profesional');
-    expect(usuarioModel.crearConPerfil.mock.calls[0][0].rolNombre).toBe('profesional');
-  });
-
-  test('sin rol, la cuenta se crea como usuario', async () => {
-    usuarioModel.buscarPorCorreo.mockResolvedValue(null);
-    usuarioModel.crearConPerfil.mockImplementation(async () => usuarioDePrueba());
-
-    await request(app).post('/api/auth/registro').send({ nombre: 'Ana Pérez', correo: 'ana@correo.cl', password: PASSWORD });
-
+    expect(respuesta.body.usuario.rol).toBe('usuario');
     expect(usuarioModel.crearConPerfil.mock.calls[0][0].rolNombre).toBe('usuario');
   });
 
-  test('nunca permite registrarse como administrador', async () => {
-    const respuesta = await request(app).post('/api/auth/registro')
+  test('tampoco se puede registrar como administrador', async () => {
+    usuarioModel.buscarPorCorreo.mockResolvedValue(null);
+    usuarioModel.crearConPerfil.mockImplementation(async (datos) => usuarioDePrueba({ rol: { id: 1, nombre: datos.rolNombre } }));
+
+    await request(app).post('/api/auth/registro')
       .send({ nombre: 'Ana Pérez', correo: 'ana@correo.cl', password: PASSWORD, rol: 'administrador' });
 
-    expect(respuesta.status).toBe(400);
-    expect(respuesta.body.detalles.rol).toBe('Selecciona un rol válido');
-    expect(usuarioModel.crearConPerfil).not.toHaveBeenCalled();
+    expect(usuarioModel.crearConPerfil.mock.calls[0][0].rolNombre).toBe('usuario');
   });
 
   test('escenario 3: con "Recordarme" el token dura 30 días; sin marcarlo, lo configurado por defecto', async () => {

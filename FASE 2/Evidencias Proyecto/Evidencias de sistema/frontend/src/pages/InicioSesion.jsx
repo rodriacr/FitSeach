@@ -63,7 +63,7 @@ export default function InicioSesion() {
           {enviando ? 'Ingresando…' : <>Iniciar sesión <Icono nombre="flecha" /></>}
         </button>
       </form>
-      <BotonGoogle />
+      <BotonGoogle recordar={datos.recordar} />
       <p className="pie-acceso">¿No tienes una cuenta? <Link to="/registro" className="enlace-acento">Regístrate aquí</Link></p>
     </PantallaAcceso>
   );

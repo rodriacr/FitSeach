@@ -30,13 +30,16 @@ export const SESION = {
 };
 
 // Respuesta de GET /api/perfil con la forma completa (pasos del asistente incluidos).
-export function respuestaPerfil({ perfil = {}, objetivos = {}, salud = null, requerimientoCaloricoKcal = null, usuario = SESION.usuario } = {}) {
+// tipoCuenta llega en true por omisión: la mayoría de las pruebas trabajan con una cuenta que ya eligió su tipo.
+export function respuestaPerfil({
+  perfil = {}, objetivos = {}, salud = null, tipoCuenta = true, requerimientoCaloricoKcal = null, usuario = SESION.usuario,
+} = {}) {
   const basico = { pesoKg: null, alturaCm: null, edad: null, sexo: null, actividadFisica: null, ...perfil };
   const metas = { objetivoPrincipal: null, comidasDia: null, horasSueno: null, ...objetivos };
   const completo = Object.values(basico).every((valor) => valor !== null);
   return {
     usuario, perfil: basico, completo, requerimientoCaloricoKcal, objetivos: metas, salud,
-    pasos: { datosPersonales: completo, objetivos: Object.values(metas).every((valor) => valor !== null), salud: salud !== null },
+    pasos: { tipoCuenta, datosPersonales: completo, objetivos: Object.values(metas).every((valor) => valor !== null), salud: salud !== null },
   };
 }
 

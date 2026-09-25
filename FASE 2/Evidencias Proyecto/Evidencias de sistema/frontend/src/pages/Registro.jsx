@@ -6,14 +6,12 @@ import CampoFormulario from '../components/CampoFormulario.jsx';
 import Icono from '../components/Icono.jsx';
 import PantallaAcceso from '../components/PantallaAcceso.jsx';
 import { useSesion } from '../context/SesionContext.jsx';
-import { ROLES_REGISTRO, validarRegistro } from '../services/validaciones.js';
-
-const ICONO_ROL = { usuario: 'usuario', profesional: 'maletin' };
+import { validarRegistro } from '../services/validaciones.js';
 
 export default function Registro() {
   const { registrar } = useSesion();
   const navegar = useNavigate();
-  const [datos, setDatos] = useState({ nombre: '', correo: '', password: '', confirmacion: '', rol: 'usuario' });
+  const [datos, setDatos] = useState({ nombre: '', correo: '', password: '', confirmacion: '' });
   const [errores, setErrores] = useState({});
   const [mensaje, setMensaje] = useState('');
   const [enviando, setEnviando] = useState(false);
@@ -29,8 +27,8 @@ export default function Registro() {
 
     setEnviando(true);
     try {
-      const { nombre, correo, password, rol } = datos;
-      await registrar({ nombre, correo, password, rol });
+      const { nombre, correo, password } = datos;
+      await registrar({ nombre, correo, password });
       navegar('/perfil', { replace: true });
     } catch (error) {
       setErrores(error.detalles || {});
@@ -58,25 +56,11 @@ export default function Registro() {
             autoComplete="new-password" icono="candado" etiquetaOculta value={datos.confirmacion} onChange={cambiar} error={errores.confirmacion} />
         </div>
 
-        <fieldset className="selector-rol" aria-describedby={errores.rol ? 'rol-error' : undefined}>
-          <legend>¿Cuál es tu rol?</legend>
-          <div className="selector-rol__opciones">
-            {ROLES_REGISTRO.map(({ valor, etiqueta }) => (
-              <label key={valor} className={`selector-rol__opcion${datos.rol === valor ? ' selector-rol__opcion--activa' : ''}`}>
-                <input type="radio" name="rol" value={valor} checked={datos.rol === valor} onChange={cambiar} />
-                <Icono nombre={ICONO_ROL[valor]} />
-                {etiqueta}
-              </label>
-            ))}
-          </div>
-          {errores.rol && <p id="rol-error" className="campo__mensaje" role="alert">{errores.rol}</p>}
-        </fieldset>
-
         <button type="submit" className="boton boton--principal" disabled={enviando}>
           {enviando ? 'Creando cuenta…' : <>Registrarse <Icono nombre="flecha" /></>}
         </button>
       </form>
-      <BotonGoogle separador="o regístrate con" />
+      <BotonGoogle separador="o regístrate con" textoGoogle="signup_with" />
       <p className="pie-acceso">¿Ya tienes una cuenta? <Link to="/iniciar-sesion" className="enlace-acento">Inicia sesión</Link></p>
     </PantallaAcceso>
   );

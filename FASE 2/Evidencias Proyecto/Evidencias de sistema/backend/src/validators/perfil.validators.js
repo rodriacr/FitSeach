@@ -5,6 +5,13 @@ const valores = (opciones) => opciones.map((opcion) => opcion.valor);
 const valoresActividad = valores(perfil.actividadFisica);
 const valoresSexo = valores(perfil.sexo);
 
+// Tipo de cuenta del primer paso del asistente (FS-HU-02); el administrador nunca se puede elegir.
+const tipoCuenta = [
+  body('rol')
+    .notEmpty().withMessage('Selecciona el tipo de cuenta').bail()
+    .isIn(['usuario', 'profesional']).withMessage('Selecciona el tipo de cuenta'),
+];
+
 const actualizar = [
   body('pesoKg')
     .notEmpty().withMessage('El peso es obligatorio').bail()
@@ -70,4 +77,4 @@ const salud = [
     { obligatoria: true, mensajeVacia: 'Indica si tienes alergias (o marca "Ninguna")' }),
 ];
 
-module.exports = { actualizar, objetivos, salud };
+module.exports = { tipoCuenta, actualizar, objetivos, salud };

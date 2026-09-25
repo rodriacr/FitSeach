@@ -20,27 +20,74 @@ const SALUD = { condicionesMedicas: ['hipertension'], tomaMedicamentos: true, me
 describe('Asistente de perfil: pasos pendientes', () => {
   beforeEach(() => jest.resetAllMocks());
 
-  test('un usuario recién registrado tiene los tres pasos pendientes', async () => {
+  test('un usuario recién registrado tiene los cuatro pasos pendientes', async () => {
     usuarioModel.buscarPorIdConPerfil.mockResolvedValue(usuarioDePrueba());
 
     const { body } = await conSesion(request(app).get('/api/perfil'));
 
-    expect(body.pasos).toEqual({ datosPersonales: false, objetivos: false, salud: false });
+    expect(body.pasos).toEqual({ tipoCuenta: false, datosPersonales: false, objetivos: false, salud: false });
     expect(body.objetivos).toEqual({ objetivoPrincipal: null, comidasDia: null, horasSueno: null });
     expect(body.salud).toBeNull();
   });
 
-  test('con los tres pasos guardados el perfil queda completo', async () => {
+  test('con los cuatro pasos guardados el perfil queda completo', async () => {
     usuarioModel.buscarPorIdConPerfil.mockResolvedValue(usuarioDePrueba({
+      rolConfirmado: true,
       perfil: { ...PERFIL_BASICO, ...OBJETIVOS },
       informacionSalud: { id: 1, usuarioId: 1, ...SALUD },
     }));
 
     const { body } = await conSesion(request(app).get('/api/perfil'));
 
-    expect(body.pasos).toEqual({ datosPersonales: true, objetivos: true, salud: true });
+    expect(body.pasos).toEqual({ tipoCuenta: true, datosPersonales: true, objetivos: true, salud: true });
     expect(body.objetivos).toEqual(OBJETIVOS);
     expect(body.salud).toEqual(SALUD);
+  });
+});
+
+describe('PUT /api/perfil/tipo-cuenta (FS-HU-02): tipo de cuenta elegido en el perfil', () => {
+  beforeEach(() => jest.resetAllMocks());
+
+  const comoProfesional = (sobrescribir = {}) =>
+    usuarioDePrueba({ rol: { id: 2, nombre: 'profesional' }, rolConfirmado: true, ...sobrescribir });
+
+  test('confirma el tipo de cuenta y devuelve un token nuevo con el mismo vencimiento', async () => {
+    usuarioModel.confirmarRol.mockResolvedValue(comoProfesional());
+    usuarioModel.buscarPorIdConPerfil.mockResolvedValue(comoProfesional());
+
+    const respuesta = await conSesion(request(app).put('/api/perfil/tipo-cuenta')).send({ rol: 'profesional' });
+
+    expect(respuesta.status).toBe(200);
+    expect(usuarioModel.confirmarRol).toHaveBeenCalledWith(1, 'profesional');
+    expect(respuesta.body.usuario.rol).toBe('profesional');
+    expect(respuesta.body.pasos.tipoCuenta).toBe(true);
+    // El rol viaja dentro del token: el nuevo lo trae actualizado y mantiene la duración de la sesión.
+    const nuevo = jwt.verify(respuesta.body.token, process.env.JWT_SECRET);
+    expect(nuevo.rol).toBe('profesional');
+    expect(nuevo.exp).toBe(jwt.decode(token).exp);
+  });
+
+  test('nunca se puede elegir el rol administrador', async () => {
+    const respuesta = await conSesion(request(app).put('/api/perfil/tipo-cuenta')).send({ rol: 'administrador' });
+
+    expect(respuesta.status).toBe(400);
+    expect(respuesta.body.detalles.rol).toBe('Selecciona el tipo de cuenta');
+    expect(usuarioModel.confirmarRol).not.toHaveBeenCalled();
+  });
+
+  test('sin elegir nada no guarda', async () => {
+    const respuesta = await conSesion(request(app).put('/api/perfil/tipo-cuenta')).send({});
+
+    expect(respuesta.status).toBe(400);
+    expect(respuesta.body.detalles.rol).toBe('Selecciona el tipo de cuenta');
+    expect(usuarioModel.confirmarRol).not.toHaveBeenCalled();
+  });
+
+  test('sin token responde 401', async () => {
+    const respuesta = await request(app).put('/api/perfil/tipo-cuenta').send({ rol: 'profesional' });
+
+    expect(respuesta.status).toBe(401);
+    expect(usuarioModel.confirmarRol).not.toHaveBeenCalled();
   });
 });
 
