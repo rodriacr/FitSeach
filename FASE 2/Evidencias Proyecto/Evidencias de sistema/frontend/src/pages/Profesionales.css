@@ -79,3 +79,7 @@
 .directorio__ayuda li + li { margin-top: .9rem; }
 .directorio__lateral .directorio__google { position: static; }
 @media (max-width: 600px) { .directorio__cabecera { padding: 1.4rem; } }
+
+.directorio__lugar-google { padding: 1rem; margin: 1rem 0; border: 1px solid #dce4e9; border-radius: 12px; background: #fff; }
+.directorio__lugar-google h3 { margin: .5rem 0; }
+.directorio__lugar-google small { color: #536776; }

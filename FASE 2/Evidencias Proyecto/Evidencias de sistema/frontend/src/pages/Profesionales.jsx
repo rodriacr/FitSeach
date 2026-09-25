@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Alerta from '../components/Alerta.jsx';
 import Icono from '../components/Icono.jsx';
+import FichasGoogle from '../components/FichasGoogle.jsx';
 import KinesiologosGoogle from '../components/KinesiologosGoogle.jsx';
 import { listarProfesionales, obtenerEspecialidades } from '../services/profesional.service.js';
 import './Profesionales.css';
@@ -52,7 +53,7 @@ export default function Profesionales() {
         <button type="submit" className="boton boton--principal boton--compacto">Buscar profesionales</button>
         {(especialidad || zona) && <button type="button" className="boton-texto" onClick={() => setParametros({})}>Limpiar filtro</button>}
       </form>
-      <p className="texto-secundario">Filtra los registrados en FitSearch y el mapa de Google por especialidad y comuna.</p>
+      <p className="texto-secundario">Busca en FitSearch y Google Maps por especialidad y comuna.</p>
       {resultado?.especialidades?.length > 0 && <nav className="directorio__categorias" aria-label="Explorar especialidades">
         <span>Explora:</span>
         <button type="button" aria-pressed={!especialidad} onClick={() => setParametros(zona ? { comuna: zona } : {})}>Todas</button>
@@ -61,7 +62,7 @@ export default function Profesionales() {
       </nav>}
       <div className="directorio__resultados">
       <div aria-live="polite" aria-busy={cargando}>
-        <h2 className="directorio__titulo-lista">Registrados en FitSearch</h2>
+        <h2 className="directorio__titulo-lista">Resultados de la búsqueda</h2>
         {cargando ? <p className="directorio__estado" role="status">Cargando profesionales…</p> : resultado.error ? (
           <div className="directorio__estado"><Alerta>{resultado.error}</Alerta>
             <button className="boton boton--secundario boton--compacto" onClick={() => setIntento(intento + 1)}>Reintentar</button>
@@ -78,7 +79,7 @@ export default function Profesionales() {
             <div className="directorio__lista">
               {resultado.profesionales.map((profesional) => (
                 <article className="directorio__tarjeta" key={profesional.id}>
-                  <div className="directorio__origen"><span>FICHA FITSEARCH</span><Icono nombre="maletin" tamano={16} /></div>
+                  <div className="directorio__origen"><span>Registrado en FitSearch</span><Icono nombre="maletin" tamano={16} /></div>
                   <div className="directorio__identidad">
                     <span className="directorio__avatar" aria-hidden="true">{profesional.nombre.split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0]).join('')}</span>
                     <div><h2>{profesional.nombre}</h2><span className="directorio__especialidad">{profesional.especialidad}</span></div>
@@ -104,6 +105,7 @@ export default function Profesionales() {
             </nav>
           </>
         )}
+        <FichasGoogle especialidad={especialidad} zona={zona} />
       </div>
       <div className="directorio__lateral"><KinesiologosGoogle especialidad={especialidad} zona={zona} />
         <section className="directorio__ayuda"><span className="directorio__antetitulo">Antes de elegir</span><h2>Encuentra una atención que se ajuste a ti</h2>
