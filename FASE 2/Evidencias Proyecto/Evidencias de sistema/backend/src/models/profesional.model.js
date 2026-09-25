@@ -7,11 +7,12 @@ const seleccion = {
   establecimiento: { select: { nombre: true, direccion: true } },
 };
 
-async function listar({ especialidad, pagina, limite }) {
+async function listar({ especialidad, comuna, pagina, limite }) {
   return prisma.profesional.findMany({
     where: {
       usuario: { rol: { nombre: 'profesional' } },
       ...(especialidad ? { especialidad: { equals: especialidad } } : {}),
+      ...(comuna ? { establecimiento: { is: { direccion: { contains: comuna } } } } : {}),
     },
     select: seleccion, orderBy: { id: 'asc' }, skip: (pagina - 1) * limite, take: limite + 1,
   });

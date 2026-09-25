@@ -17,13 +17,13 @@ test('HU-03: lista fichas sin filtrar y excluye información privada', async () 
     id: 1, nombre: 'Ana Demo', especialidad: 'Nutrición', descripcion: 'Atención nutricional', ubicacionLat: -33.686, ubicacionLng: -71.215,
     establecimiento: { nombre: 'Consulta Demo', direccion: 'Melipilla' },
   }] });
-  expect(modelo.listar).toHaveBeenCalledWith({ especialidad: '', pagina: 1, limite: 12 });
+  expect(modelo.listar).toHaveBeenCalledWith({ especialidad: '', comuna: '', pagina: 1, limite: 12 });
 });
 test('aplica especialidad y página, retirando espacios', async () => {
   modelo.listar.mockResolvedValue([ficha]);
   const res = await request(app).get('/api/profesionales').query({ especialidad: ' Nutrición ', pagina: '2' });
   expect(res.status).toBe(200);
-  expect(modelo.listar).toHaveBeenCalledWith({ especialidad: 'Nutrición', pagina: 2, limite: 12 });
+  expect(modelo.listar).toHaveBeenCalledWith({ especialidad: 'Nutrición', comuna: '', pagina: 2, limite: 12 });
 });
 test('sin coincidencias devuelve lista vacía', async () => {
   modelo.listar.mockResolvedValue([]);
@@ -60,4 +60,15 @@ test('catálogo de especialidades', async () => {
   const res = await request(app).get('/api/profesionales/especialidades');
   expect(res.status).toBe(200);
   expect(res.body).toEqual({ especialidades: ['Kinesiología', 'Nutrición'] });
+});
+
+test('combina comuna y especialidad en la consulta', async () => {
+  modelo.listar.mockResolvedValue([]);
+  const res = await request(app).get('/api/profesionales').query({ comuna: ' Melipilla ', especialidad: 'Nutrición' });
+  expect(res.status).toBe(200);
+  expect(modelo.listar).toHaveBeenCalledWith({ comuna: 'Melipilla', especialidad: 'Nutrición', pagina: 1, limite: 12 });
+});
+test('rechaza comuna repetida o demasiado larga', async () => {
+  expect((await request(app).get('/api/profesionales?comuna=A&comuna=B')).status).toBe(400);
+  expect((await request(app).get('/api/profesionales').query({ comuna: 'a'.repeat(151) })).status).toBe(400);
 });

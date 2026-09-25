@@ -7,11 +7,11 @@ test('la búsqueda actualiza a la vez FitSearch y Google Maps', async () => {
   const fetch = simular(); renderizarApp('/profesionales');
   await screen.findByRole('heading', { name: 'Ana Demo' });
   await userEvent.type(screen.getByLabelText('Especialidad'), 'Kinesiología');
-  await userEvent.clear(screen.getByLabelText('Comuna o ciudad del mapa'));
-  await userEvent.type(screen.getByLabelText('Comuna o ciudad del mapa'), 'Santiago');
+  await userEvent.clear(screen.getByLabelText('Comuna o ciudad'));
+  await userEvent.type(screen.getByLabelText('Comuna o ciudad'), 'Santiago');
   await userEvent.click(screen.getByRole('button', { name: 'Buscar profesionales' }));
   expect(await screen.findByTitle('Kinesiología en Santiago — Google Maps')).toHaveAttribute('src', expect.stringContaining('Santiago'));
-  expect(fetch.mock.calls.some(([url]) => url.includes('especialidad=Kinesiolog%C3%ADa'))).toBe(true);
+  expect(fetch.mock.calls.some(([url]) => url.includes('comuna=Santiago') && url.includes('especialidad=Kinesiolog%C3%ADa'))).toBe(true);
 });
 
 const ficha = { id: 1, nombre: 'Ana Demo', especialidad: 'Nutrición', descripcion: 'Atención nutricional', ubicacionLat: -33.686, ubicacionLng: -71.215, establecimiento: { nombre: 'Consulta Demo', direccion: 'Melipilla' } };
@@ -32,7 +32,7 @@ test('envía el filtro a la API, muestra vacío y permite limpiarlo', async () =
   await screen.findByRole('heading', { name: 'Ana Demo' });
   await userEvent.type(screen.getByLabelText('Especialidad'), 'Inexistente');
   await userEvent.click(screen.getByRole('button', { name: 'Buscar profesionales' }));
-  expect(await screen.findByRole('heading', { name: 'No hay profesionales para esta especialidad' })).toBeInTheDocument();
+  expect(await screen.findByRole('heading', { name: 'No hay profesionales para estos filtros' })).toBeInTheDocument();
   expect(fetch.mock.calls.some(([url]) => url.includes('especialidad=Inexistente'))).toBe(true);
   await userEvent.click(screen.getByRole('button', { name: 'Limpiar filtro' }));
   expect(await screen.findByRole('heading', { name: 'Ana Demo' })).toBeInTheDocument();

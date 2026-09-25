@@ -11,26 +11,26 @@ export default function Profesionales() {
   const especialidad = parametros.get('especialidad') || '';
   const pagina = parametros.get('pagina') || '1';
   const [intento, setIntento] = useState(0);
-  const [zona, setZona] = useState('Melipilla, Chile');
-  const clave = JSON.stringify([especialidad, pagina, intento]);
+  const zona = parametros.get('comuna') || '';
+  const clave = JSON.stringify([especialidad, pagina, intento, zona]);
   const [resultado, setResultado] = useState(null);
   const cargando = resultado?.clave !== clave;
 
   useEffect(() => {
     let activo = true;
-    Promise.all([listarProfesionales({ especialidad, pagina }), obtenerEspecialidades()])
+    Promise.all([listarProfesionales({ especialidad, comuna: zona, pagina }), obtenerEspecialidades()])
       .then(([listado, catalogo]) => activo && setResultado({ clave, ...listado, ...catalogo }))
       .catch((error) => activo && setResultado({ clave, error: error.message }));
     return () => { activo = false; };
-  }, [clave, especialidad, pagina]);
+  }, [clave, especialidad, pagina, zona]);
 
   const filtrar = (evento) => {
     evento.preventDefault();
     const valor = new FormData(evento.currentTarget).get('especialidad').trim();
-    setZona(new FormData(evento.currentTarget).get('zona').trim() || 'Melipilla, Chile');
-    setParametros(valor ? { especialidad: valor } : {});
+    const comuna = new FormData(evento.currentTarget).get('zona').trim();
+    setParametros({ ...(valor ? { especialidad: valor } : {}), ...(comuna ? { comuna } : {}) });
   };
-  const cambiarPagina = (numero) => setParametros({ ...(especialidad ? { especialidad } : {}), pagina: String(numero) });
+  const cambiarPagina = (numero) => setParametros({ ...(especialidad ? { especialidad } : {}), ...(zona ? { comuna: zona } : {}), pagina: String(numero) });
 
   return (
     <section className="directorio">
@@ -40,18 +40,18 @@ export default function Profesionales() {
         <h1>Encuentra apoyo para tu bienestar</h1>
         <p>Explora profesionales de salud y deporte. Conoce su especialidad y dónde atienden.</p>
       </header>
-      <form className="directorio__filtro" onSubmit={filtrar} key={especialidad}>
+      <form className="directorio__filtro" onSubmit={filtrar} key={JSON.stringify([especialidad, zona])}>
         <div className="campo">
           <label className="campo__etiqueta" htmlFor="especialidad">Especialidad</label>
           <input className="campo__control" id="especialidad" name="especialidad" type="search" list="especialidades"
             maxLength="100" defaultValue={especialidad} placeholder="Todas las especialidades" autoComplete="off" />
           <datalist id="especialidades">{resultado?.especialidades?.map((valor) => <option key={valor} value={valor} />)}</datalist>
         </div>
-        <div className="campo"><label className="campo__etiqueta" htmlFor="zona">Comuna o ciudad del mapa</label><input className="campo__control" id="zona" name="zona" maxLength="150" defaultValue={zona} placeholder="Ej.: Melipilla, Chile" /></div>
+        <div className="campo"><label className="campo__etiqueta" htmlFor="zona">Comuna o ciudad</label><input className="campo__control" id="zona" name="zona" maxLength="150" defaultValue={zona} placeholder="Ej.: Melipilla, Chile" /></div>
         <button type="submit" className="boton boton--principal boton--compacto">Buscar profesionales</button>
-        {especialidad && <button type="button" className="boton-texto" onClick={() => setParametros({})}>Limpiar filtro</button>}
+        {(especialidad || zona) && <button type="button" className="boton-texto" onClick={() => setParametros({})}>Limpiar filtro</button>}
       </form>
-      <p className="texto-secundario">Una búsqueda para FitSearch y Google Maps. La comuna se aplica al mapa.</p>
+      <p className="texto-secundario">Filtra los registrados en FitSearch y el mapa de Google por especialidad y comuna.</p>
       <div className="directorio__resultados">
       <div aria-live="polite" aria-busy={cargando}>
         <h2 className="directorio__titulo-lista">Registrados en FitSearch</h2>
@@ -61,9 +61,9 @@ export default function Profesionales() {
           </div>
         ) : !resultado.profesionales.length ? (
           <div className="directorio__estado">
-            <h2>{especialidad ? 'No hay profesionales para esta especialidad' : 'Aún no hay profesionales para mostrar'}</h2>
-            <p>{especialidad ? 'Prueba otra especialidad o limpia el filtro para ver todos los resultados.' : 'Cuando se incorporen fichas profesionales, aparecerán aquí.'}</p>
-            {(especialidad || pagina !== '1') && <button className="boton boton--secundario boton--compacto" onClick={() => setParametros({})}>Ver todos los profesionales</button>}
+            <h2>{(especialidad || zona) ? 'No hay profesionales para estos filtros' : 'Aún no hay profesionales para mostrar'}</h2>
+            <p>{(especialidad || zona) ? 'Prueba otra especialidad o comuna, o limpia los filtros para ver todos los resultados.' : 'Cuando se incorporen fichas profesionales, aparecerán aquí.'}</p>
+            {(especialidad || zona || pagina !== '1') && <button className="boton boton--secundario boton--compacto" onClick={() => setParametros({})}>Ver todos los profesionales</button>}
           </div>
         ) : (
           <>

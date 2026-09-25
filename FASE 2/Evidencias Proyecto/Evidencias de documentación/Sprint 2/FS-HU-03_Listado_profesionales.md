@@ -27,9 +27,9 @@ Ajuste visual del acceso: pestaña discreta con icono de búsqueda, área de int
 
 ### Ampliación solicitada: búsqueda unificada con Google Maps
 
-Un único formulario actualiza el filtro de especialidad de FitSearch y la búsqueda del mapa de Google. Incluye comuna o ciudad del mapa, inicialmente Melipilla, Chile. En computador las fichas aparecen junto al mapa; en pantallas pequeñas se apilan dentro de la misma vista. Se retiró el formulario externo separado.
+Un único formulario actualiza el filtro de especialidad de FitSearch y la búsqueda del mapa de Google. Incluye comuna o ciudad opcional; sin zona se muestran todas las fichas y el mapa se centra en una búsqueda general en Chile. En computador las fichas aparecen junto al mapa; en pantallas pequeñas se apilan dentro de la misma vista. Se retiró el formulario externo separado.
 
-Las tarjetas siguen siendo registros de MySQL y los resultados de Google aparecen como lugares en su mapa, identificados por su origen. La comuna filtra únicamente Google Maps; no se implementa geolocalización de las fichas propias ni se importa información de Google a MySQL. Sin especialidad se buscan profesionales de salud y deporte; con Kinesiología se buscan esos servicios en la zona indicada. El mapa depende de la disponibilidad de Google y del navegador; el enlace externo permite abrir los resultados directamente. No cierra HU-05/HU-06.
+Las tarjetas siguen siendo registros de MySQL y los resultados de Google aparecen como lugares en su mapa, identificados por su origen. La comuna filtra también FitSearch por coincidencia de texto en la dirección del establecimiento (sin distinguir mayúsculas ni acentos). Las fichas sin establecimiento/dirección quedan fuera cuando se aplica este filtro; no se infiere la comuna a partir de coordenadas. No se importa información de Google a MySQL. Sin especialidad se buscan profesionales de salud y deporte; con Kinesiología se buscan esos servicios en la zona indicada. El mapa depende de la disponibilidad de Google y del navegador; el enlace externo permite abrir los resultados directamente. No cierra HU-05/HU-06.
 
 Validación del ajuste: 45 pruebas de frontend aprobadas, incluida una que comprueba que el mismo envío actualiza la API y la consulta del mapa; lint y compilación aprobados. La comprobación visual de este último ajuste quedó pendiente porque el control de aprobación de la herramienta de navegador alcanzó su límite de uso. Las capturas anteriores corresponden a versiones previas.
 
@@ -83,7 +83,7 @@ La prueba local de esta entrega se aisló en `fitsearch_shadow`, comprobada vac�
 
 ## Validación ejecutada
 
-- Backend: **71 pruebas aprobadas**, incluidas 13 pruebas nuevas de HU-03.
+- Backend: **73 pruebas aprobadas**, incluidas 15 pruebas nuevas de HU-03.
 - Frontend: **45 pruebas aprobadas**, incluidas 6 pruebas nuevas de HU-03 y una de la búsqueda externa.
 - ESLint aprobado en backend y frontend; compilación Vite aprobada.
 - `npm audit`: 0 vulnerabilidades en ambas carpetas.
@@ -115,3 +115,5 @@ Capturas en `Sprint 2/Capturas del sistema/`. Todas muestran datos ficticios.
 Publicar la rama y abrir PR contra `main`, revisión del equipo, aceptación de los criterios por el PO y registrar horas reales por el responsable. No se inventaron estimaciones, horas ni aprobaciones. Este documento complementa el DAS y el backlog con la implementación efectiva de HU-03.
 
 Verificación de la ampliación: búsqueda de Melipilla, Chile en el navegador con mapa y marcadores visibles. Evidencia: `Capturas del sistema/hu03_06_google_separado.png`. Referencia del enlace externo: [Google Maps URLs](https://developers.google.com/maps/documentation/urls/get-started).
+
+Filtro de comuna: `GET /api/profesionales?comuna=Melipilla&especialidad=Nutrición`; texto opcional, hasta 150 caracteres, sin parámetros repetidos. La URL conserva comuna y especialidad al paginar y reinicia a página 1 al buscar. Verificación MySQL: Melipilla devuelve dos fichas demo; combinada con Nutrición devuelve una; comuna inexistente devuelve cero. Frontend 45 pruebas, backend 73, lint y build aprobados.

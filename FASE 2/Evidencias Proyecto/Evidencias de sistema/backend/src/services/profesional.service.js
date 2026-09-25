@@ -1,8 +1,8 @@
 const modelo = require('../models/profesional.model');
 
-async function listar({ especialidad = '', pagina = 1 }) {
+async function listar({ especialidad = '', comuna = '', pagina = 1 }) {
   const limite = 12;
-  const filas = await modelo.listar({ especialidad, pagina, limite });
+  const filas = await modelo.listar({ especialidad, comuna, pagina, limite });
   return {
     profesionales: filas.slice(0, limite).map((fila) => ({
       id: fila.id, nombre: fila.usuario.nombre, especialidad: fila.especialidad,
